@@ -1,21 +1,34 @@
 package br.com.aegro.production.services;
 
 import br.com.aegro.production.domain.entities.Farm;
+import br.com.aegro.production.domain.entities.Field;
 
 import java.util.List;
 
 public interface FarmService {
 
-    List<Farm> findAll();
+    List<Farm> findAllFarms();
 
-    Farm findById(String id);
+    Farm findFarmById(String id);
 
-    Farm insert(Farm farm);
+    Field findFieldByFieldsId(String fieldId);
 
-    Farm save (Farm farm);
+    Farm createFarm(Farm farm);
 
-    void deleteAll();
+    Farm updateFarm(Farm farm, String farmId);
 
-    double getProductivity(String id);
+    void deleteAllFarms();
+
+    void deleteFarmById(String id);
+
+    Field createField(Field field, String farmId);
+
+    Field updateField(Field field, String farmId, String fieldId);
+
+    void deleteFieldById(String farmId, String fieldId);
+
+    double getFarmProductivity(String farmId);
+
+    double getFieldProductivity(String fieldId);
 
 }

@@ -6,15 +6,22 @@ import java.util.List;
 
 public interface ProductionService {
 
-    List<Production> findByFieldId(String fieldId);
+    Production findById(String productionId);
 
     List<Production> findByFarmId(String farmId);
 
-    Production findById(String id);
+    List<Production> findByFieldId(String fieldId);
 
-    Production insert(Production production);
+    Production create(Production production);
 
-    Production save (Production production);
+    Production update(Production production);
 
     void deleteAll();
+
+    void deleteById(String productionId);
+
+    void deleteByFarmId(String farmId);
+
+    void deleteByFieldId(String fieldId);
+
 }

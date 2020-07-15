@@ -4,4 +4,7 @@ import br.com.aegro.production.domain.entities.Farm;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface FarmRepository extends MongoRepository<Farm, String> {
+
+    Farm findByFieldsId(String fieldId);
+
 }

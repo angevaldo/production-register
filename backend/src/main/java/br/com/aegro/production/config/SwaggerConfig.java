@@ -1,6 +1,8 @@
 package br.com.aegro.production.config;
 
 import br.com.aegro.production.domain.entities.Farm;
+import br.com.aegro.production.domain.entities.Field;
+import br.com.aegro.production.domain.entities.Production;
 import com.fasterxml.classmate.TypeResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +32,7 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .additionalModels(typeResolver.resolve(Farm.class));
+                .ignoredParameterTypes(Farm.class, Field.class, Production.class);
     }
 
     private ApiInfo apiInfo() {

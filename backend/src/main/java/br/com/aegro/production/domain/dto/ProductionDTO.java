@@ -1,16 +1,29 @@
 package br.com.aegro.production.domain.dto;
 
+import io.swagger.annotations.ApiModel;
+
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Objects;
 
+@ApiModel(description = "Production registry")
 public class ProductionDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
+
+    @Min(value = 1, message = "A área deve ser maior que zero.")
     private double value;
+
     private double productivity;
 
     public ProductionDTO() {
+    }
+
+    public ProductionDTO(String id, double value, double productivity) {
+        this.id = id;
+        this.value = value;
+        this.productivity = productivity;
     }
 
     public String getId() {

@@ -12,37 +12,52 @@ import java.util.Optional;
 public class ProductionServiceImpl implements br.com.aegro.production.services.ProductionService {
 
     @Autowired
-    private ProductionRepository repository;
+    ProductionRepository productionRepository;
 
     @Override
-    public List<Production> findByFieldId(String fieldId) {
-        return repository.findByFieldId(fieldId);
-    }
-
-    @Override
-    public List<Production> findByFarmId(String farmId) {
-        return repository.findByFarmId(farmId);
-    }
-
-    @Override
-    public Production findById(String id) {
-        Optional<Production> obj = repository.findById(id);
+    public Production findById(String productionId) {
+        Optional<Production> obj = productionRepository.findById(productionId);
         return obj.get();
     }
 
     @Override
-    public Production insert(Production production) {
-        return repository.insert(production);
+    public List<Production> findByFarmId(String farmId) {
+        return productionRepository.findByFarmId(farmId);
     }
 
     @Override
-    public Production save(Production production) {
-        return this.repository.save(production);
+    public List<Production> findByFieldId(String fieldId) {
+        return productionRepository.findByFieldId(fieldId);
+    }
+
+    @Override
+    public Production create(Production production) {
+        return productionRepository.insert(production);
+    }
+
+    @Override
+    public Production update(Production production) {
+        return productionRepository.save(production);
     }
 
     @Override
     public void deleteAll() {
-        repository.deleteAll();
+        productionRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteById(String id) {
+        productionRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteByFarmId(String farmId) {
+        productionRepository.deleteByFarmId(farmId);
+    }
+
+    @Override
+    public void deleteByFieldId(String fieldId) {
+        productionRepository.deleteByFieldId(fieldId);
     }
 
 }

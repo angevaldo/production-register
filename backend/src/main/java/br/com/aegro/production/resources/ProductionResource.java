@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ProductionResource {
 
     @Autowired
-    private ProductionService service;
+    private ProductionService productionService;
 
     private final ModelMapper modelMapper;
 
@@ -31,56 +31,61 @@ public class ProductionResource {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping(value = "/findByFieldId")
-    public ResponseEntity<List<ProductionDTO>> findByFieldId(@PathParam("fieldId") String fieldId) {
-        List<Production> list = service.findByFieldId(fieldId);
-        List<ProductionDTO> listDTO = list.stream().map(x -> modelMapper.map(x, ProductionDTO.class))
-                                        .collect(Collectors.toList());
-
-        return ResponseEntity.ok(listDTO);
+    private void updateDataFromTo(ProductionDTO productionDTO, Production production) {
+        production.setValue(productionDTO.getValue());
     }
 
     @GetMapping(value = "/findByFarmId")
-    public ResponseEntity<List<ProductionDTO>> findByFarmId(@PathParam("farmId") String farmId) {
-        List<Production> list = service.findByFarmId(farmId);
+    public ResponseEntity<List<ProductionDTO>> findProductionsByFarmId(@PathParam("farmId") String farmId) {
+        List<Production> list = productionService.findByFarmId(farmId);
         List<ProductionDTO> listDto = list.stream().map(x -> modelMapper.map(x, ProductionDTO.class))
                                         .collect(Collectors.toList());
 
         return ResponseEntity.ok(listDto);
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<ProductionDTO> findById(@PathVariable String id) {
-        Production production = service.findById(id);
+    @GetMapping(value = "/findByFieldId")
+    public ResponseEntity<List<ProductionDTO>> findProductionsByFieldId(@PathParam("fieldId") String fieldId) {
+        List<Production> list = productionService.findByFieldId(fieldId);
+        List<ProductionDTO> listDTO = list.stream().map(x -> modelMapper.map(x, ProductionDTO.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(listDTO);
+    }
+
+    @GetMapping(value = "/{productionId}")
+    public ResponseEntity<ProductionDTO> findProductionById(@PathVariable String productionId) {
+        Production production = productionService.findById(productionId);
         ProductionDTO productionDTO = modelMapper.map(production, ProductionDTO.class);
 
         return ResponseEntity.ok(productionDTO);
     }
 
     @PostMapping
-    public ResponseEntity<ProductionDTO> create(@RequestBody @Valid ProductionDTO productionDTO) {
+    public ResponseEntity<ProductionDTO> createProduction(@RequestBody @Valid ProductionDTO productionDTO) {
         Production production = modelMapper.map(productionDTO, Production.class);
-        production = service.insert(production);
+        production = productionService.create(production);
         productionDTO = modelMapper.map(production, ProductionDTO.class);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{productionId}")
                     .buildAndExpand(production.getId()).toUri();
 
         return ResponseEntity.created(uri).body(productionDTO);
     }
 
     @PutMapping
-    public ResponseEntity<ProductionDTO> update(@RequestBody @Valid ProductionDTO productionDTO) {
-        Production production = service.findById(productionDTO.getId());
+    public ResponseEntity<ProductionDTO> updateProduction(@RequestBody @Valid ProductionDTO productionDTO) {
+        Production production = productionService.findById(productionDTO.getId());
         updateDataFromTo(productionDTO, production);
-        production = service.save(production);
+        production = productionService.update(production);
         productionDTO = modelMapper.map(production, ProductionDTO.class);
 
         return ResponseEntity.ok(productionDTO);
     }
 
-    private void updateDataFromTo(ProductionDTO productionDTO, Production production) {
-        production.setValue(productionDTO.getValue());
+    @DeleteMapping(path = "{productionId}")
+    public void deleteProduction(@PathVariable @Valid String productionId) {
+        this.productionService.deleteById(productionId);
     }
 
 }

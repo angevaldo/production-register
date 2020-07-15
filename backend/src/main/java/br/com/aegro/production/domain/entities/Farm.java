@@ -1,6 +1,6 @@
 package br.com.aegro.production.domain.entities;
 
-import io.swagger.annotations.ApiModel;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
@@ -10,13 +10,15 @@ import java.util.Objects;
 import java.util.Set;
 
 @Document
-@ApiModel(description = "Farm master data")
 public class Farm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
+
     private String name;
+
+    @Lazy(value = true)
     private Set<Field> fields = new HashSet<>();
 
     public Farm() {
