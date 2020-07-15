@@ -12,13 +12,17 @@ public interface ProductionService {
 
     List<Production> findByFieldId(String fieldId);
 
+    double getProductivityByFarmId(String farmId);
+
+    double getProductivityByFieldId(String fieldId);
+
     Production create(Production production);
 
     Production update(Production production);
 
     void deleteAll();
 
-    void deleteById(String productionId);
+    void delete(String productionId);
 
     void deleteByFarmId(String farmId);
 

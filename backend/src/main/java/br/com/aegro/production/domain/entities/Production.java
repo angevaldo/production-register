@@ -13,13 +13,21 @@ public class Production implements Serializable {
 
     @Id
     private String id;
+
     private double value;
+
     @org.springframework.data.mongodb.core.mapping.Field("prod")
     private double productivity;
+
     @DBRef(lazy = true)
     private Farm farm;
+
     @DBRef(lazy = true)
     private Field field;
+
+    private void updateProductivity() {
+        this.productivity = this.value / getField().getArea();
+    }
 
     public Production() {
     }
@@ -27,7 +35,6 @@ public class Production implements Serializable {
     public Production(String id, double value, Farm farm, Field field) {
         this.id = id;
         this.value = value;
-
         this.farm = farm;
 
         this.setField(field);
@@ -47,10 +54,7 @@ public class Production implements Serializable {
 
     public void setValue(double value) {
         this.value = value;
-    }
-
-    private void updateProductivity() {
-        this.productivity = this.value / getField().getArea();
+        this.updateProductivity();
     }
 
     public double getProductivity() {

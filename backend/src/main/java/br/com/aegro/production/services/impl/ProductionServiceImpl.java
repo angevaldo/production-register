@@ -31,6 +31,18 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
+    public double getProductivityByFarmId(String farmId) {
+        List<Production> productions = findByFarmId(farmId);
+        return productions.stream().mapToDouble(Production::getProductivity).sum();
+    }
+
+    @Override
+    public double getProductivityByFieldId(String fieldId) {
+        List<Production> productions = findByFieldId(fieldId);
+        return productions.stream().mapToDouble(Production::getProductivity).sum();
+    }
+
+    @Override
     public Production create(Production production) {
         return productionRepository.insert(production);
     }
@@ -46,7 +58,7 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public void deleteById(String id) {
+    public void delete(String id) {
         productionRepository.deleteById(id);
     }
 
