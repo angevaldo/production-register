@@ -24,16 +24,12 @@ import java.util.stream.Collectors;
 public class ProductionResource {
 
     @Autowired
-    private ProductionService productionService;
+    ProductionService productionService;
 
-    private final ModelMapper modelMapper;
+    @Autowired
+    ModelMapper modelMapper;
 
-    public ProductionResource(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
-
-    private void updateDataFromTo(ProductionDTO productionDTO, Production production) throws ProductivityException {
-        production.setValue(productionDTO.getValue());
+    public ProductionResource() {
     }
 
     @GetMapping(value = "/{productionId}")
@@ -89,8 +85,8 @@ public class ProductionResource {
     @PutMapping(value = "/{productionId}")
     public ResponseEntity<ProductionDTO> update(@RequestBody @Valid ProductionDTO productionDTO,
                                                 @PathVariable String productionId) throws ProductivityException {
-        Production production = productionService.findById(productionId);
-        updateDataFromTo(productionDTO, production);
+        Production production = modelMapper.map(productionDTO, Production.class);
+        production.setId(productionId);
         production = productionService.update(production);
         productionDTO = modelMapper.map(production, ProductionDTO.class);
 

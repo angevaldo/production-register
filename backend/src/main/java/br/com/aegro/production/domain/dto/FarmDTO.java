@@ -16,8 +16,8 @@ public class FarmDTO implements Serializable {
 
     private String id;
 
-    @NotEmpty(message = "Nome não pode ser vazio.")
-    @Length(min = 3, max = 50, message = "Nome deve conter entre 3 e 50 caracteres.")
+    @NotEmpty(message = "Name cannot be empty.")
+    @Length(min = 3, max = 50, message = "The name must be between 3 and 50 characters.")
     private String name;
 
     private Set<FieldDTO> fields = new HashSet<>();

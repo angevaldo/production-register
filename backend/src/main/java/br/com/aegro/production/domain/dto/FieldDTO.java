@@ -14,11 +14,11 @@ public class FieldDTO implements Serializable {
 
     private String id;
 
-    @NotEmpty(message = "Nome não pode ser vazio.")
-    @Length(min = 3, max = 50, message = "Nome deve conter entre 3 e 50 caracteres.")
+    @NotEmpty(message = "Name cannot be empty.")
+    @Length(min = 3, max = 50, message = "The name must be between 3 and 50 characters.")
     private String name;
 
-    @Min(value = 1, message = "A área deve ser maior que zero.")
+    @Min(value = 1, message = "The area must be greater than zero.")
     private double area;
 
     public FieldDTO() {

@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 public class FieldResource {
 
     @Autowired
-    private FieldService fieldService;
+    FieldService fieldService;
 
-    private final ModelMapper modelMapper;
+    @Autowired
+    ModelMapper modelMapper;
 
-    public FieldResource(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
+    public FieldResource() {
     }
 
     @GetMapping

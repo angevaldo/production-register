@@ -26,10 +26,10 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles(value = "test")
 public class ProductionServiceTests {
 
-    ProductionService productionService;
+    private ProductionService productionService;
 
     @Mock
-    ProductionRepository productionRepository;
+    private ProductionRepository productionRepository;
 
     private Farm farm;
 
@@ -168,6 +168,7 @@ public class ProductionServiceTests {
         // scenario
         Production expectedProduction = prod_1_1;
         Production actualProduction = new Production(prod_1_1.getId(), 33d, farm, field_1);
+        when(productionRepository.findById(expectedProduction.getId())).thenReturn(Optional.of(expectedProduction));
         when(productionRepository.save(expectedProduction)).thenReturn(expectedProduction);
 
         // execution

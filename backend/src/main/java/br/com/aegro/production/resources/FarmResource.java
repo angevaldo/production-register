@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 public class FarmResource {
 
     @Autowired
-    private FarmService farmService;
+    FarmService farmService;
 
-    private final ModelMapper modelMapper;
+    @Autowired
+    ModelMapper modelMapper;
 
-    public FarmResource(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
+    public FarmResource() {
     }
 
     @GetMapping

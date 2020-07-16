@@ -1,6 +1,8 @@
 package br.com.aegro.production.services.impl;
 
+import br.com.aegro.production.domain.dto.ProductionDTO;
 import br.com.aegro.production.domain.entities.Production;
+import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,10 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
 
     @Autowired
     ProductionRepository productionRepository;
+
+    private void updateDataFromTo(Production productionFrom, Production productionTo) throws ProductivityException {
+        productionFrom.setValue(productionTo.getValue());
+    }
 
     public ProductionServiceImpl(ProductionRepository productionRepository) {
         this.productionRepository = productionRepository;
@@ -53,8 +59,10 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public Production update(Production production) {
-        return productionRepository.save(production);
+    public Production update(Production production) throws ProductivityException {
+        Production transientProduction = findById(production.getId());
+        updateDataFromTo(production, transientProduction);
+        return productionRepository.save(transientProduction);
     }
 
     @Override

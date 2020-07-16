@@ -26,13 +26,13 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles(value = "test")
 public class FarmServiceTests {
 
-    FarmService farmService;
+    private FarmService farmService;
 
     @Mock
-    FarmRepository farmRepository;
+    private FarmRepository farmRepository;
 
     @Mock
-    ProductionService productionService;
+    private ProductionService productionService;
 
     @BeforeEach
     public void setUp() {

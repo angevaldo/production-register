@@ -29,7 +29,7 @@ public class ResourceExceptionHandler {
 
 	@ExceptionHandler({HttpMessageNotReadableException.class})
 	public ResponseEntity<StandardError> badRequest(HttpMessageNotReadableException ex, HttpServletRequest request) {
-		String msg = "Resource not valid";
+		String msg = "Object not valid";
 		HttpStatus httpSts = HttpStatus.BAD_REQUEST;
 		StandardError standardErr = new StandardError(Instant.now(), httpSts.value(), msg, ex.getMessage(), request.getRequestURI());
 		return status(httpSts).body(standardErr);

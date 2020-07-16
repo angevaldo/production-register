@@ -1,6 +1,7 @@
 package br.com.aegro.production.services;
 
 import br.com.aegro.production.domain.entities.Production;
+import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface ProductionService {
 
     Production create(Production production);
 
-    Production update(Production production);
+    Production update(Production production) throws ProductivityException;
 
     void deleteAll();
 

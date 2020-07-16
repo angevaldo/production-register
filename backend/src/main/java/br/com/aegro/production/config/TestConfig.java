@@ -30,9 +30,9 @@ public class TestConfig implements CommandLineRunner {
     @SneakyThrows
     @Override
     public void run(String... args) {
-        //farmService.deleteAllFarms();
+        farmService.deleteAll();
 
-        int nFarms = 2;//(new Random().nextInt(11) + 40) * 10; // 400 to 500 Farms
+        int nFarms = 2;//(new Random().nextInt(11) + 40); // 40 to 50 Farms
         for (int i=0; i < nFarms; i++) {
             Farm farm = new Farm(null, "Farm " + i);
             farm = farmService.create(farm);
