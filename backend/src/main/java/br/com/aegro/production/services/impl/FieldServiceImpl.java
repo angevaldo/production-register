@@ -6,6 +6,7 @@ import br.com.aegro.production.domain.repositories.FarmRepository;
 import br.com.aegro.production.services.FieldService;
 import br.com.aegro.production.services.ProductionService;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
+import com.sun.jdi.ObjectCollectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,11 @@ public class FieldServiceImpl implements FieldService {
         return obj.orElseThrow(() -> new ObjectNotFoundException(fieldId));
     }
 
+    private Farm findFarmByFarmId(String farmId) {
+        Optional<Farm> obj = farmRepository.findById(farmId);
+        return obj.orElseThrow(() -> new ObjectNotFoundException(farmId));
+    }
+
     private void updateFieldDataFromTo(Field fieldFrom, Field fieldTo) {
         fieldTo.setArea(fieldFrom.getArea());
         fieldTo.setName(fieldFrom.getName());
@@ -39,14 +45,7 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public List<Field> findByFarmId(String farmId) {
-        Optional<Farm> farm = farmRepository.findById(farmId);
-        if (farm.isEmpty()) {
-            throw new ObjectNotFoundException(farmId);
-        }
-
-        List<Field> fields = new ArrayList<>();
-        fields.addAll(farm.get().getFields());
-        return fields;
+        return new ArrayList<>(findFarmByFarmId(farmId).getFields());
     }
 
     @Override
@@ -61,13 +60,9 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public Field create(Field field, String farmId) {
-        Optional<Farm> farm = farmRepository.findById(farmId);
-        if (farm.isEmpty()) {
-            throw new ObjectNotFoundException(farmId);
-        }
-
-        farm.get().getFields().add(field);
-        farmRepository.save(farm.get());
+        Farm farm = findFarmByFarmId(farmId);
+        farm.getFields().add(field);
+        farmRepository.save(farm);
 
         return field;
     }

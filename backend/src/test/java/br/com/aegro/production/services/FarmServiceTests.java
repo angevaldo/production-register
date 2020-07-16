@@ -4,7 +4,7 @@ import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.repositories.FarmRepository;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import br.com.aegro.production.services.impl.FarmServiceImpl;
-import org.bson.types.ObjectId;
+import static org.bson.types.ObjectId.get;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,12 +52,11 @@ public class FarmServiceTests {
 
     @Test
     @DisplayName("Should return all farms.")
-    public void findAll_void_farmsList() throws Exception {
+    public void findAll_void_farmsList() {
         // scenario
-        List<Farm> expectedFarms = new ArrayList<>();
-        Farm farm1 = new Farm(ObjectId.get().toString(), "Farm 1");
-        Farm farm2 = new Farm(ObjectId.get().toString(), "Farm 2");
-        expectedFarms.addAll(Arrays.asList(farm1, farm2));
+        Farm farm1 = new Farm(get().toString(), "Farm 1");
+        Farm farm2 = new Farm(get().toString(), "Farm 2");
+        List<Farm> expectedFarms = new ArrayList<>(Arrays.asList(farm1, farm2));
 
         when(farmRepository.findAll()).thenReturn(expectedFarms);
 
@@ -70,10 +69,9 @@ public class FarmServiceTests {
 
     @Test
     @DisplayName("Should return a farm with passed id.")
-    public void findById_validId_farm() throws Exception {
+    public void findById_validId_farm() {
         // scenario
-        String farmId = ObjectId.get().toString();
-
+        String farmId = get().toString();
         Farm expectedFarm = new Farm(farmId, "Farm 1");
 
         when(farmRepository.findById(farmId)).thenReturn(Optional.of(expectedFarm));
@@ -88,12 +86,11 @@ public class FarmServiceTests {
 
     @Test
     @DisplayName("Should create and return a new farm.")
-    public void create_farm_farm() throws Exception {
+    public void create_farm_farm() {
         // scenario
-        String farmId = ObjectId.get().toString();
-
-        Farm actualFarm = new Farm(null, "Farm 1");
+        String farmId = get().toString();
         Farm expectedFarm = new Farm(farmId, "Farm 1");
+        Farm actualFarm = new Farm(null, "Farm 1");
 
         when(farmRepository.insert(actualFarm)).thenReturn(expectedFarm);
 
@@ -107,12 +104,11 @@ public class FarmServiceTests {
 
     @Test
     @DisplayName("Should update and return a farm.")
-    public void update_farm_farm() throws Exception {
+    public void update_farm_farm() {
         // scenario
-        String farmId = ObjectId.get().toString();
-
-        Farm actualFarm = new Farm(farmId, "Farm old");
+        String farmId = get().toString();
         Farm expectedFarm = new Farm(farmId, "Farm new");
+        Farm actualFarm = new Farm(farmId, "Farm old");
 
         when(farmRepository.findById(farmId)).thenReturn(Optional.of(actualFarm));
         when(farmRepository.save(expectedFarm)).thenReturn(expectedFarm);
@@ -127,7 +123,7 @@ public class FarmServiceTests {
 
     @Test
     @DisplayName("Should delete all farms.")
-    public void deleteAll_void_void() throws Exception {
+    public void deleteAll_void_void() {
         // execution
         farmService.deleteAll();
 
@@ -138,9 +134,9 @@ public class FarmServiceTests {
 
     @Test
     @DisplayName("Should delete a farm with passed id.")
-    public void deleteById_validId_void() throws Exception {
+    public void deleteById_validId_void() {
         // scenario
-        String farmId = ObjectId.get().toString();
+        String farmId = get().toString();
 
         // execution
         farmService.deleteById(farmId);

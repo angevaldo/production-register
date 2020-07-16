@@ -20,8 +20,9 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public List<Production> findByFarmId(String farmId) {
-        return productionRepository.findByFarmId(farmId);
+    public Production findById(String productionId) {
+        Optional<Production> obj = productionRepository.findById(productionId);
+        return obj.orElseThrow(() -> new ObjectNotFoundException(productionId));
     }
 
     @Override
@@ -30,20 +31,19 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public Production findById(String productionId) {
-        Optional<Production> obj = productionRepository.findById(productionId);
-        return obj.orElseThrow(() -> new ObjectNotFoundException(productionId));
-    }
-
-    @Override
-    public double getProductivityByFarmId(String farmId) {
-        List<Production> productions = findByFarmId(farmId);
-        return productions.stream().mapToDouble(Production::getProductivity).sum();
+    public List<Production> findByFarmId(String farmId) {
+        return productionRepository.findByFarmId(farmId);
     }
 
     @Override
     public double getProductivityByFieldId(String fieldId) {
         List<Production> productions = findByFieldId(fieldId);
+        return productions.stream().mapToDouble(Production::getProductivity).sum();
+    }
+
+    @Override
+    public double getProductivityByFarmId(String farmId) {
+        List<Production> productions = findByFarmId(farmId);
         return productions.stream().mapToDouble(Production::getProductivity).sum();
     }
 
@@ -68,13 +68,13 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public void deleteByFarmId(String farmId) {
-        productionRepository.deleteByFarmId(farmId);
+    public void deleteByFieldId(String fieldId) {
+        productionRepository.deleteByFieldId(fieldId);
     }
 
     @Override
-    public void deleteByFieldId(String fieldId) {
-        productionRepository.deleteByFieldId(fieldId);
+    public void deleteByFarmId(String farmId) {
+        productionRepository.deleteByFarmId(farmId);
     }
 
 }

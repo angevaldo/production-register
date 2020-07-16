@@ -29,7 +29,7 @@ public class TestConfig implements CommandLineRunner {
 
     @SneakyThrows
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         //farmService.deleteAllFarms();
 
         int nFarms = 2;//(new Random().nextInt(11) + 40) * 10; // 400 to 500 Farms

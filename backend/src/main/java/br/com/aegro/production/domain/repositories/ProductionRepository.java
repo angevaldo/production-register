@@ -7,12 +7,12 @@ import java.util.List;
 
 public interface ProductionRepository extends MongoRepository<Production, String> {
 
-    List<Production> findByFarmId(String farmId);
-
     List<Production> findByFieldId(String fieldId);
 
-    void deleteByFarmId(String farmId);
+    List<Production> findByFarmId(String farmId);
 
     void deleteByFieldId(String fieldId);
+
+    void deleteByFarmId(String farmId);
 
 }
