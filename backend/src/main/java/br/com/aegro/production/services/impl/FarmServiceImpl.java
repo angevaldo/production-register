@@ -4,7 +4,7 @@ import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.repositories.FarmRepository;
 import br.com.aegro.production.services.FarmService;
 import br.com.aegro.production.services.ProductionService;
-import br.com.aegro.production.services.exceptions.ResourceNotFoundException;
+import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +24,11 @@ public class FarmServiceImpl implements FarmService {
         farmTo.setName(farmFrom.getName());
     }
 
+    public FarmServiceImpl(FarmRepository farmRepository, ProductionService productionService) {
+        this.farmRepository = farmRepository;
+        this.productionService = productionService;
+    }
+
     @Override
     public List<Farm> findAll() {
         return farmRepository.findAll();
@@ -32,12 +37,12 @@ public class FarmServiceImpl implements FarmService {
     @Override
     public Farm findById(String id) {
         Optional<Farm> obj = farmRepository.findById(id);
-        return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+        return obj.orElseThrow(() -> new ObjectNotFoundException(id));
     }
 
     @Override
     public Farm create(Farm farm) {
-        return farmRepository.save(farm);
+        return farmRepository.insert(farm);
     }
 
     @Override
@@ -56,7 +61,7 @@ public class FarmServiceImpl implements FarmService {
     }
 
     @Override
-    public void delete(String id) {
+    public void deleteById(String id) {
         farmRepository.deleteById(id);
         productionService.deleteByFarmId(id);
     }

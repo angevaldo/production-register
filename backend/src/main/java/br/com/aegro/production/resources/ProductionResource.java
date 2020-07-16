@@ -2,6 +2,7 @@ package br.com.aegro.production.resources;
 
 import br.com.aegro.production.domain.dto.ProductionDTO;
 import br.com.aegro.production.domain.entities.Production;
+import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
 import br.com.aegro.production.services.ProductionService;
 import io.swagger.annotations.Api;
 import org.modelmapper.ModelMapper;
@@ -31,7 +32,7 @@ public class ProductionResource {
         this.modelMapper = modelMapper;
     }
 
-    private void updateDataFromTo(ProductionDTO productionDTO, Production production) {
+    private void updateDataFromTo(ProductionDTO productionDTO, Production production) throws ProductivityException {
         production.setValue(productionDTO.getValue());
     }
 
@@ -87,7 +88,7 @@ public class ProductionResource {
 
     @PutMapping(value = "/{productionId}")
     public ResponseEntity<ProductionDTO> update(@RequestBody @Valid ProductionDTO productionDTO,
-                                                @PathVariable String productionId) {
+                                                @PathVariable String productionId) throws ProductivityException {
         Production production = productionService.findById(productionId);
         updateDataFromTo(productionDTO, production);
         production = productionService.update(production);
@@ -97,8 +98,8 @@ public class ProductionResource {
     }
 
     @DeleteMapping(path = "/{productionId}")
-    public void delete(@PathVariable String productionId) {
-        this.productionService.delete(productionId);
+    public void deleteById(@PathVariable String productionId) {
+        this.productionService.deleteById(productionId);
     }
 
 }

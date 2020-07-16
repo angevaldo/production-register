@@ -16,6 +16,6 @@ public interface FarmService {
 
     void deleteAll();
 
-    void delete(String id);
+    void deleteById(String id);
 
 }

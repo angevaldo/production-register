@@ -73,8 +73,8 @@ public class FarmResource {
     }
 
     @DeleteMapping(value = "/{id}")
-    public void delete(@PathVariable String id) {
-        farmService.delete(id);
+    public void deleteById(@PathVariable String id) {
+        farmService.deleteById(id);
     }
 
 }

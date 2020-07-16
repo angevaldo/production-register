@@ -1,5 +1,6 @@
 package br.com.aegro.production.domain.entities;
 
+import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,14 +26,17 @@ public class Production implements Serializable {
     @DBRef(lazy = true)
     private Field field;
 
-    private void updateProductivity() {
+    private void updateProductivity() throws ProductivityException {
+        if (getField() == null || getField().getArea() == 0) {
+            throw new ProductivityException(this.id);
+        }
         this.productivity = this.value / getField().getArea();
     }
 
     public Production() {
     }
 
-    public Production(String id, double value, Farm farm, Field field) {
+    public Production(String id, double value, Farm farm, Field field) throws ProductivityException {
         this.id = id;
         this.value = value;
         this.farm = farm;
@@ -52,7 +56,7 @@ public class Production implements Serializable {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(double value) throws ProductivityException {
         this.value = value;
         this.updateProductivity();
     }
@@ -73,7 +77,7 @@ public class Production implements Serializable {
         return field;
     }
 
-    public void setField(Field field) {
+    public void setField(Field field) throws ProductivityException {
         this.field = field;
         this.updateProductivity();
     }

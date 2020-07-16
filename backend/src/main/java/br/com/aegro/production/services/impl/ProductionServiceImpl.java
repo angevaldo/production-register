@@ -2,6 +2,7 @@ package br.com.aegro.production.services.impl;
 
 import br.com.aegro.production.domain.entities.Production;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
+import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +15,8 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     @Autowired
     ProductionRepository productionRepository;
 
-    @Override
-    public Production findById(String productionId) {
-        Optional<Production> obj = productionRepository.findById(productionId);
-        return obj.get();
+    public ProductionServiceImpl(ProductionRepository productionRepository) {
+        this.productionRepository = productionRepository;
     }
 
     @Override
@@ -28,6 +27,12 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     @Override
     public List<Production> findByFieldId(String fieldId) {
         return productionRepository.findByFieldId(fieldId);
+    }
+
+    @Override
+    public Production findById(String productionId) {
+        Optional<Production> obj = productionRepository.findById(productionId);
+        return obj.orElseThrow(() -> new ObjectNotFoundException(productionId));
     }
 
     @Override
@@ -58,7 +63,7 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public void delete(String id) {
+    public void deleteById(String id) {
         productionRepository.deleteById(id);
     }
 

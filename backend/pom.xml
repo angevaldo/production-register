@@ -62,15 +62,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -113,8 +107,7 @@
 						<configuration>
 							<excludes>
 								<exclude>br/com/aegro/production/ProductionApplication.class</exclude>
-								<exclude>br/com/aegro/production/domain/entities/**/*.class</exclude>
-								<exclude>br/com/aegro/production/domain/dto/**/*.class</exclude>
+								<exclude>br/com/aegro/production/domain/**/**/*.class</exclude>
 							</excludes>
 						</configuration>
 					</execution>

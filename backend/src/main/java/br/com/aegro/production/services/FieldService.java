@@ -14,6 +14,6 @@ public interface FieldService {
 
     Field update(Field field);
 
-    void delete(String farmId);
+    void deleteById(String farmId);
 
 }

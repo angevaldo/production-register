@@ -74,8 +74,8 @@ public class FieldResource {
     }
 
     @DeleteMapping(value = "/{fieldId}")
-    public void delete(@PathVariable String fieldId) {
-        fieldService.delete(fieldId);
+    public void deleteById(@PathVariable String fieldId) {
+        fieldService.deleteById(fieldId);
     }
 
 }

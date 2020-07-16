@@ -2,11 +2,11 @@ package br.com.aegro.production.services.exceptions;
 
 import java.util.Arrays;
 
-public class ResourceNotFoundException extends RuntimeException {
+public class ObjectNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	public ResourceNotFoundException(Object ... id) {
+	public ObjectNotFoundException(Object ... id) {
 		super("Resource not found. Id(s): " + Arrays.asList(id));
 	}
 
