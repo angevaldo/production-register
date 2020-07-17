@@ -1,6 +1,5 @@
 package br.com.aegro.production.resources;
 
-import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.services.FieldService;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
@@ -24,8 +23,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = FieldResource.class)
@@ -48,26 +46,17 @@ public class FieldResourceTest {
     @DisplayName("Should return 200 and fields json when get with valid params.")
     void findByFarmId_validParams_fields() throws Exception {
         // scenario
-        Field expectedField_1 = new Field(ObjectId.get().toString(), "Field 1", 10d);
-        Field expectedField_2 = new Field(ObjectId.get().toString(), "Field 2", 20d);
-
-        Farm expectedFarm = new Farm(ObjectId.get().toString(), "Farm 1");
-        expectedFarm.getFields().addAll(Arrays.asList(expectedField_1, expectedField_2));
-
-        given(fieldService.findByFarmId(expectedFarm.getId()))
-                .willReturn(Arrays.asList(expectedField_1, expectedField_2));
+        String farmId = ObjectId.get().toString();
+        Field expectField_1 = new Field(ObjectId.get().toString(), "Field 1", 10d);
+        Field expectField_2 = new Field(ObjectId.get().toString(), "Field 2", 20d);
+        given(fieldService.findByFarmId(farmId)).willReturn(Arrays.asList(expectField_1, expectField_2));
 
         // execution
-        ResultActions result = mvc.perform(get(URI).param("farmId", expectedFarm.getId()).contentType(MEDIA));
+        ResultActions result = mvc.perform(get(URI).param("farmId", farmId).contentType(MEDIA));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(expectedField_1.getId()))
-                .andExpect(jsonPath("$[0].name").value(expectedField_1.getName()))
-                .andExpect(jsonPath("$[0].area").value(expectedField_1.getArea()))
-                .andExpect(jsonPath("$[1].id").value(expectedField_2.getId()))
-                .andExpect(jsonPath("$[1].name").value(expectedField_2.getName()))
-                .andExpect(jsonPath("$[1].area").value(expectedField_2.getArea()));
+                .andExpect(content().json(objMapper.writeValueAsString(Arrays.asList(expectField_1, expectField_2))));
     }
 
     @Test
@@ -75,17 +64,15 @@ public class FieldResourceTest {
     void findById_validParams_field() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
-        Field expectedField = new Field(fieldId, "Field", 15d);
-        given(fieldService.findByFieldsId(fieldId)).willReturn(expectedField);
+        Field expectField = new Field(fieldId, "Field", 15d);
+        given(fieldService.findByFieldsId(fieldId)).willReturn(expectField);
 
         // execution
         ResultActions result = mvc.perform(get(URI + "/{id}", fieldId).contentType(MEDIA));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(expectedField.getId()))
-                .andExpect(jsonPath("name").value(expectedField.getName()))
-                .andExpect(jsonPath("area").value(expectedField.getArea()));
+                .andExpect(content().json(objMapper.writeValueAsString(expectField)));
     }
 
     @Test
@@ -115,19 +102,17 @@ public class FieldResourceTest {
     void create_validParams_field() throws Exception {
         // scenario
         String farmId = ObjectId.get().toString();
-        Field expectedField = new Field(null, "Field 1", 15d);
-        String json = objMapper.writeValueAsString(expectedField);
+        Field expectField = new Field(null, "Field 1", 15d);
+        String json = objMapper.writeValueAsString(expectField);
 
-        given(fieldService.create(expectedField, farmId)).willReturn(expectedField);
+        given(fieldService.create(expectField, farmId)).willReturn(expectField);
 
         // execution
         ResultActions result = mvc.perform(post(URI).param("farmId", farmId).contentType(MEDIA).content(json));
 
         // verification
         result.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(expectedField.getId()))
-                .andExpect(jsonPath("name").value(expectedField.getName()))
-                .andExpect(jsonPath("area").value(expectedField.getArea()));
+                .andExpect(content().json(objMapper.writeValueAsString(expectField)));
     }
 
     @Test
@@ -135,9 +120,9 @@ public class FieldResourceTest {
     void update_invalidParams_errors() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
-        Field expectedField = new Field(fieldId, "Field", 15d);
-        String json = objMapper.writeValueAsString(expectedField);
-        given(fieldService.update(expectedField)).willThrow(ObjectNotFoundException.class);
+        Field expectField = new Field(fieldId, "Field", 15d);
+        String json = objMapper.writeValueAsString(expectField);
+        given(fieldService.update(expectField)).willThrow(ObjectNotFoundException.class);
 
         // execution
         ResultActions result_1 = mvc.perform(put(URI + "/{id}", fieldId).contentType(MEDIA).content(json));
@@ -161,18 +146,16 @@ public class FieldResourceTest {
     void update_validParams_field() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
-        Field expectedField = new Field(fieldId, "Field new", 15d);
-        String json = objMapper.writeValueAsString(expectedField);
-        given(fieldService.update(expectedField)).willReturn(expectedField);
+        Field expectField = new Field(fieldId, "Field new", 15d);
+        String json = objMapper.writeValueAsString(expectField);
+        given(fieldService.update(expectField)).willReturn(expectField);
 
         // execution
         ResultActions result = mvc.perform(put(URI + "/{id}", fieldId).contentType(MEDIA).content(json));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(expectedField.getId()))
-                .andExpect(jsonPath("name").value(expectedField.getName()))
-                .andExpect(jsonPath("area").value(expectedField.getArea()));
+                .andExpect(content().json(objMapper.writeValueAsString(expectField)));
     }
 
     @Test

@@ -25,8 +25,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = FarmResource.class)
@@ -49,25 +48,19 @@ public class FarmResourceTest {
     @DisplayName("Should return 200 and farms json when get without params.")
     void findAll_none_farmsList() throws Exception {
         // scenario
-        Field expectedField = new Field(ObjectId.get().toString(), "Field 1", 10d);
-        Farm expectedFarm_1 = new Farm(ObjectId.get().toString(), "Farm 1");
-        expectedFarm_1.getFields().add(expectedField);
-        Farm expectedFarm_2 = new Farm(ObjectId.get().toString(), "Farm 2");
+        Field expectField = new Field(ObjectId.get().toString(), "Field 1", 10d);
+        Farm expectFarm_1 = new Farm(ObjectId.get().toString(), "Farm 1");
+        expectFarm_1.getFields().add(expectField);
+        Farm expectFarm_2 = new Farm(ObjectId.get().toString(), "Farm 2");
 
-        given(farmService.findAll()).willReturn(Arrays.asList(expectedFarm_1, expectedFarm_2));
+        given(farmService.findAll()).willReturn(Arrays.asList(expectFarm_1, expectFarm_2));
 
         // execution
         ResultActions result = mvc.perform(get(URI).contentType(MEDIA));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(expectedFarm_1.getId()))
-                .andExpect(jsonPath("$[0].name").value(expectedFarm_1.getName()))
-                .andExpect(jsonPath("$[0].fields[0].id").value(expectedField.getId()))
-                .andExpect(jsonPath("$[0].fields[0].name").value(expectedField.getName()))
-                .andExpect(jsonPath("$[0].fields[0].area").value(expectedField.getArea()))
-                .andExpect(jsonPath("$[1].id").value(expectedFarm_2.getId()))
-                .andExpect(jsonPath("$[1].name").value(expectedFarm_2.getName()));
+                .andExpect(content().json(objMapper.writeValueAsString(Arrays.asList(expectFarm_1, expectFarm_2))));
     }
 
     @Test
@@ -75,16 +68,15 @@ public class FarmResourceTest {
     void findById_validParams_farm() throws Exception {
         // scenario
         String farmId = ObjectId.get().toString();
-        Farm expectedFarm = new Farm(farmId, "Farm");
-        given(farmService.findById(farmId)).willReturn(expectedFarm);
+        Farm expectFarm = new Farm(farmId, "Farm");
+        given(farmService.findById(farmId)).willReturn(expectFarm);
 
         // execution
         ResultActions result = mvc.perform(get(URI + "/{id}", farmId).contentType(MEDIA));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(expectedFarm.getId()))
-                .andExpect(jsonPath("name").value(expectedFarm.getName()));
+                .andExpect(content().json(objMapper.writeValueAsString(expectFarm)));
     }
 
     @Test
@@ -109,18 +101,17 @@ public class FarmResourceTest {
     @DisplayName("Should return 201 and farm created when post with valid params.")
     void create_validParams_farm() throws Exception {
         // scenario
-        Farm expectedFarm = new Farm(ObjectId.get().toString(), "Farm 1");
+        Farm expectFarm = new Farm(ObjectId.get().toString(), "Farm 1");
         Farm actualFarm = new Farm(null, "Farm 1");
         String json = objMapper.writeValueAsString(actualFarm);
-        given(farmService.create(Mockito.any(Farm.class))).willReturn(expectedFarm);
+        given(farmService.create(Mockito.any(Farm.class))).willReturn(expectFarm);
 
         // execution
         ResultActions result = mvc.perform(post(URI).contentType(MEDIA).content(json));
 
         // verification
         result.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(expectedFarm.getId()))
-                .andExpect(jsonPath("name").value(expectedFarm.getName()));
+                .andExpect(content().json(objMapper.writeValueAsString(expectFarm)));
     }
 
     @Test
@@ -128,9 +119,9 @@ public class FarmResourceTest {
     void update_invalidParams_errors() throws Exception {
         // scenario
         String farmId = ObjectId.get().toString();
-        Farm expectedFarm = new Farm(farmId, "Farm");
-        String json = objMapper.writeValueAsString(expectedFarm);
-        given(farmService.update(expectedFarm)).willThrow(ObjectNotFoundException.class);
+        Farm expectFarm = new Farm(farmId, "Farm");
+        String json = objMapper.writeValueAsString(expectFarm);
+        given(farmService.update(expectFarm)).willThrow(ObjectNotFoundException.class);
 
         // execution
         ResultActions result_1 = mvc.perform(put(URI + "/{id}", farmId).contentType(MEDIA).content(json));
@@ -154,17 +145,16 @@ public class FarmResourceTest {
     void update_validParams_farm() throws Exception {
         // scenario
         String farmId = ObjectId.get().toString();
-        Farm expectedFarm = new Farm(farmId, "Farm new");
-        String json = objMapper.writeValueAsString(expectedFarm);
-        given(farmService.update(expectedFarm)).willReturn(expectedFarm);
+        Farm expectFarm = new Farm(farmId, "Farm new");
+        String json = objMapper.writeValueAsString(expectFarm);
+        given(farmService.update(expectFarm)).willReturn(expectFarm);
 
         // execution
         ResultActions result = mvc.perform(put(URI + "/{id}", farmId).contentType(MEDIA).content(json));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(expectedFarm.getId()))
-                .andExpect(jsonPath("name").value(expectedFarm.getName()));
+                .andExpect(content().json(objMapper.writeValueAsString(expectFarm)));
     }
 
     @Test
