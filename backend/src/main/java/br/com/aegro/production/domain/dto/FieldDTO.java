@@ -15,7 +15,7 @@ public class FieldDTO implements Serializable {
     private String id;
 
     @NotEmpty(message = "Name cannot be empty.")
-    @Length(min = 3, max = 50, message = "The name must be between 3 and 50 characters.")
+    @Length(min = 3, max = 50, message = "Name must be between 3 and 50 characters.")
     private String name;
 
     @Min(value = 1, message = "The area must be greater than zero.")
