@@ -4,7 +4,7 @@ import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.repositories.FarmRepository;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import br.com.aegro.production.services.impl.FarmServiceImpl;
-import static org.bson.types.ObjectId.get;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,11 +32,14 @@ public class FarmServiceTests {
     private FarmRepository farmRepository;
 
     @Mock
+    private FieldService fieldService;
+
+    @Mock
     private ProductionService productionService;
 
     @BeforeEach
     public void setUp() {
-        this.farmService = new FarmServiceImpl(farmRepository, productionService);
+        this.farmService = new FarmServiceImpl(farmRepository, fieldService, productionService);
     }
 
     @Test
@@ -54,8 +57,8 @@ public class FarmServiceTests {
     @DisplayName("Should return all farms.")
     public void findAll_void_farmsList() {
         // scenario
-        Farm farm1 = new Farm(get().toString(), "Farm 1");
-        Farm farm2 = new Farm(get().toString(), "Farm 2");
+        Farm farm1 = new Farm(ObjectId.get().toString(), "Farm 1");
+        Farm farm2 = new Farm(ObjectId.get().toString(), "Farm 2");
         List<Farm> expectedFarms = new ArrayList<>(Arrays.asList(farm1, farm2));
 
         when(farmRepository.findAll()).thenReturn(expectedFarms);
@@ -71,7 +74,7 @@ public class FarmServiceTests {
     @DisplayName("Should return a farm with passed id.")
     public void findById_validId_farm() {
         // scenario
-        String farmId = get().toString();
+        String farmId = ObjectId.get().toString();
         Farm expectedFarm = new Farm(farmId, "Farm 1");
 
         when(farmRepository.findById(farmId)).thenReturn(Optional.of(expectedFarm));
@@ -88,7 +91,7 @@ public class FarmServiceTests {
     @DisplayName("Should create and return a new farm.")
     public void create_farm_farm() {
         // scenario
-        String farmId = get().toString();
+        String farmId = ObjectId.get().toString();
         Farm expectedFarm = new Farm(farmId, "Farm 1");
         Farm actualFarm = new Farm(null, "Farm 1");
 
@@ -106,7 +109,7 @@ public class FarmServiceTests {
     @DisplayName("Should update and return a farm.")
     public void update_farm_farm() {
         // scenario
-        String farmId = get().toString();
+        String farmId = ObjectId.get().toString();
         Farm expectedFarm = new Farm(farmId, "Farm new");
         Farm actualFarm = new Farm(farmId, "Farm old");
 
@@ -136,7 +139,7 @@ public class FarmServiceTests {
     @DisplayName("Should delete a farm with passed id.")
     public void deleteById_validId_void() {
         // scenario
-        String farmId = get().toString();
+        String farmId = ObjectId.get().toString();
 
         // execution
         farmService.deleteById(farmId);

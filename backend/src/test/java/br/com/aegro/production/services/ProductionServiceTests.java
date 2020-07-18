@@ -7,6 +7,7 @@ import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import br.com.aegro.production.services.impl.ProductionServiceImpl;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.bson.types.ObjectId.get;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,15 +44,15 @@ public class ProductionServiceTests {
     public void setUp() throws ProductivityException {
         this.productionService = new ProductionServiceImpl(productionRepository);
 
-        this.farm = new Farm(get().toString(), "Farm");
+        this.farm = new Farm(ObjectId.get().toString(), "Farm");
 
-        this.field_1 = new Field(get().toString(), "Field 1", 100d);
-        this.field_2 = new Field(get().toString(), "Field 2", 250d);
+        this.field_1 = new Field(ObjectId.get().toString(), "Field 1", 100d, farm);
+        this.field_2 = new Field(ObjectId.get().toString(), "Field 2", 250d, farm);
         this.farm.getFields().addAll(Arrays.asList(field_1, field_2));
 
-        this.prod_1_1 = new Production(get().toString(), 50, farm, field_1);
-        this.prod_1_2 = new Production(get().toString(), 25, farm, field_1);
-        this.prod_2_1 = new Production(get().toString(), 100, farm, field_2);
+        this.prod_1_1 = new Production(ObjectId.get().toString(), 50, farm, field_1);
+        this.prod_1_2 = new Production(ObjectId.get().toString(), 25, farm, field_1);
+        this.prod_2_1 = new Production(ObjectId.get().toString(), 100, farm, field_2);
         this.productions.addAll(Arrays.asList(prod_1_1, prod_1_2, prod_2_1));
     }
 

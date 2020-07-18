@@ -1,11 +1,13 @@
 package br.com.aegro.production.domain.entities;
 
-import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Document
 public class Field implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -14,14 +16,22 @@ public class Field implements Serializable {
     private String name;
     private double area;
 
+    @DBRef(lazy = true)
+    private Farm farm;
+
     public Field() {
-        this.setId(null);
     }
 
-    public Field(String id, String name, double area) {
-        this.setId(id);
+    public Field(String id) {
+        this.id = id;
+    }
+
+    public Field(String id, String name, double area, Farm farm) {
+            this.id = id;
         this.name = name;
         this.area = area;
+
+        this.farm = farm;
     }
 
     public String getId() {
@@ -29,7 +39,7 @@ public class Field implements Serializable {
     }
 
     public void setId(String id) {
-        this.id = id == null ? new ObjectId().toString() : id;
+        this.id = id;
     }
 
     public String getName() {
@@ -46,6 +56,14 @@ public class Field implements Serializable {
 
     public void setArea(double area) {
         this.area = area;
+    }
+
+    public Farm getFarm() {
+        return farm;
+    }
+
+    public void setFarm(Farm farm) {
+        this.farm = farm;
     }
 
     @Override

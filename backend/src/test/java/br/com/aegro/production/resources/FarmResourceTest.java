@@ -1,5 +1,6 @@
 package br.com.aegro.production.resources;
 
+import br.com.aegro.production.domain.dto.FarmDTO;
 import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.services.FarmService;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,6 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -39,6 +43,9 @@ public class FarmResourceTest {
     MockMvc mvc;
 
     @Autowired
+    ModelMapper modMapper;
+
+    @Autowired
     ObjectMapper objMapper;
 
     @MockBean
@@ -48,10 +55,13 @@ public class FarmResourceTest {
     @DisplayName("Should return 200 and farms json when get without params.")
     void findAll_none_farmsList() throws Exception {
         // scenario
-        Field expectField = new Field(ObjectId.get().toString(), "Field 1", 10d);
         Farm expectFarm_1 = new Farm(ObjectId.get().toString(), "Farm 1");
+        Field expectField = new Field(ObjectId.get().toString(), "Field 1", 10d, expectFarm_1);
         expectFarm_1.getFields().add(expectField);
         Farm expectFarm_2 = new Farm(ObjectId.get().toString(), "Farm 2");
+        List<FarmDTO> expectFarmsDTO = Arrays.asList(expectFarm_1, expectFarm_2).stream()
+                .map(x -> modMapper.map(x, FarmDTO.class))
+                .collect(Collectors.toList());
 
         given(farmService.findAll()).willReturn(Arrays.asList(expectFarm_1, expectFarm_2));
 
@@ -60,7 +70,7 @@ public class FarmResourceTest {
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(Arrays.asList(expectFarm_1, expectFarm_2))));
+                .andExpect(content().json(objMapper.writeValueAsString(expectFarmsDTO)));
     }
 
     @Test
@@ -76,7 +86,7 @@ public class FarmResourceTest {
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectFarm)));
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectFarm, FarmDTO.class))));
     }
 
     @Test
@@ -102,7 +112,7 @@ public class FarmResourceTest {
     void create_validParams_farm() throws Exception {
         // scenario
         Farm expectFarm = new Farm(ObjectId.get().toString(), "Farm 1");
-        Farm actualFarm = new Farm(null, "Farm 1");
+        FarmDTO actualFarm = modMapper.map(expectFarm, FarmDTO.class);
         String json = objMapper.writeValueAsString(actualFarm);
         given(farmService.create(Mockito.any(Farm.class))).willReturn(expectFarm);
 
@@ -111,7 +121,7 @@ public class FarmResourceTest {
 
         // verification
         result.andExpect(status().isCreated())
-                .andExpect(content().json(objMapper.writeValueAsString(expectFarm)));
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectFarm, FarmDTO.class))));
     }
 
     @Test
@@ -146,6 +156,7 @@ public class FarmResourceTest {
         // scenario
         String farmId = ObjectId.get().toString();
         Farm expectFarm = new Farm(farmId, "Farm new");
+        FarmDTO expectFarmDTO = modMapper.map(expectFarm, FarmDTO.class);
         String json = objMapper.writeValueAsString(expectFarm);
         given(farmService.update(expectFarm)).willReturn(expectFarm);
 
@@ -154,7 +165,7 @@ public class FarmResourceTest {
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectFarm)));
+                .andExpect(content().json(objMapper.writeValueAsString(expectFarmDTO)));
     }
 
     @Test

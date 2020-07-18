@@ -26,7 +26,7 @@ public class FarmResource {
     FarmService farmService;
 
     @Autowired
-    ModelMapper modelMapper;
+    ModelMapper modMapper;
 
     public FarmResource() {
     }
@@ -35,7 +35,7 @@ public class FarmResource {
     public ResponseEntity<List<FarmDTO>> findAll() {
         List<Farm> list = farmService.findAll();
         List<FarmDTO> listDTO = list.stream()
-                                    .map(x -> modelMapper.map(x, FarmDTO.class))
+                                    .map(x -> modMapper.map(x, FarmDTO.class))
                                     .collect(Collectors.toList());
 
         return ResponseEntity.ok(listDTO);
@@ -44,16 +44,16 @@ public class FarmResource {
     @GetMapping(value = "/{id}")
     public ResponseEntity<FarmDTO> findById(@PathVariable String id) {
         Farm farm = farmService.findById(id);
-        FarmDTO farmDTO = modelMapper.map(farm, FarmDTO.class);
+        FarmDTO farmDTO = modMapper.map(farm, FarmDTO.class);
         return ResponseEntity.ok(farmDTO);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<FarmDTO> create(@RequestBody @Valid FarmDTO farmDTO) {
-        Farm farm = modelMapper.map(farmDTO, Farm.class);
+        Farm farm = modMapper.map(farmDTO, Farm.class);
         farm = farmService.create(farm);
-        farmDTO = modelMapper.map(farm, FarmDTO.class);
+        farmDTO = modMapper.map(farm, FarmDTO.class);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{fieldId}")
                     .buildAndExpand(farmDTO.getId()).toUri();
@@ -64,10 +64,10 @@ public class FarmResource {
     @PutMapping(value = "/{id}")
     public ResponseEntity<FarmDTO> update(@RequestBody @Valid FarmDTO farmDTO,
                                               @PathVariable("id") String id) {
-        Farm farm = modelMapper.map(farmDTO, Farm.class);
+        Farm farm = modMapper.map(farmDTO, Farm.class);
         farm.setId(id);
         farm = farmService.update(farm);
-        farmDTO = modelMapper.map(farm, FarmDTO.class);
+        farmDTO = modMapper.map(farm, FarmDTO.class);
 
         return ResponseEntity.ok(farmDTO);
     }

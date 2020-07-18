@@ -1,6 +1,7 @@
 package br.com.aegro.production.domain.entities;
 
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
@@ -15,13 +16,16 @@ public class Farm implements Serializable {
 
     @Id
     private String id;
-
     private String name;
 
-    @Lazy(value = true)
+    @DBRef(lazy = true)
     private Set<Field> fields = new HashSet<>();
 
     public Farm() {
+    }
+
+    public Farm(String id) {
+        this.id = id;
     }
 
     public Farm(String id, String name) {

@@ -3,6 +3,7 @@ package br.com.aegro.production.services.impl;
 import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.repositories.FarmRepository;
 import br.com.aegro.production.services.FarmService;
+import br.com.aegro.production.services.FieldService;
 import br.com.aegro.production.services.ProductionService;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,18 @@ public class FarmServiceImpl implements FarmService {
     FarmRepository farmRepository;
 
     @Autowired
+    FieldService fieldService;
+
+    @Autowired
     ProductionService productionService;
 
     private void updateFarmDataFromTo(Farm farmFrom, Farm farmTo) {
         farmTo.setName(farmFrom.getName());
     }
 
-    public FarmServiceImpl(FarmRepository farmRepository, ProductionService productionService) {
+    public FarmServiceImpl(FarmRepository farmRepository, FieldService fieldService, ProductionService productionService) {
         this.farmRepository = farmRepository;
+        this.fieldService = fieldService;
         this.productionService = productionService;
     }
 
@@ -47,23 +52,23 @@ public class FarmServiceImpl implements FarmService {
 
     @Override
     public Farm update(Farm farm) {
-        Farm transientFarm = findById(farm.getId());
-        updateFarmDataFromTo(farm, transientFarm);
-        transientFarm = farmRepository.save(transientFarm);
-
-        return transientFarm;
+        Farm persistFarm = findById(farm.getId());
+        updateFarmDataFromTo(farm, persistFarm);
+        return farmRepository.save(persistFarm);
     }
 
     @Override
     public void deleteAll() {
         productionService.deleteAll();
+        fieldService.deleteAll();
         farmRepository.deleteAll();
     }
 
     @Override
     public void deleteById(String id) {
-        farmRepository.deleteById(id);
         productionService.deleteByFarmId(id);
+        fieldService.deleteByFarmId(id);
+        farmRepository.deleteById(id);
     }
 
 }

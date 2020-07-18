@@ -1,5 +1,7 @@
 package br.com.aegro.production.resources;
 
+import br.com.aegro.production.domain.dto.FieldDTO;
+import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.services.FieldService;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
@@ -8,6 +10,7 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,6 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -37,6 +42,9 @@ public class FieldResourceTest {
     MockMvc mvc;
 
     @Autowired
+    ModelMapper modMapper;
+
+    @Autowired
     ObjectMapper objMapper;
 
     @MockBean
@@ -46,17 +54,21 @@ public class FieldResourceTest {
     @DisplayName("Should return 200 and fields json when get with valid params.")
     void findByFarmId_validParams_fields() throws Exception {
         // scenario
-        String farmId = ObjectId.get().toString();
-        Field expectField_1 = new Field(ObjectId.get().toString(), "Field 1", 10d);
-        Field expectField_2 = new Field(ObjectId.get().toString(), "Field 2", 20d);
-        given(fieldService.findByFarmId(farmId)).willReturn(Arrays.asList(expectField_1, expectField_2));
+        Farm expectFarm = new Farm(ObjectId.get().toString());
+        Field expectField_1 = new Field(ObjectId.get().toString(), "Field 1", 10d, expectFarm);
+        Field expectField_2 = new Field(ObjectId.get().toString(), "Field 2", 20d, expectFarm);
+        List<Field> expectFields = Arrays.asList(expectField_1, expectField_2);
+        List<FieldDTO> expectFieldsDTO = expectFarm.getFields().stream()
+                .map(x -> modMapper.map(x, FieldDTO.class))
+                .collect(Collectors.toList());
+        given(fieldService.findByFarmId(expectFarm.getId())).willReturn(expectFields);
 
         // execution
-        ResultActions result = mvc.perform(get(URI).param("farmId", farmId).contentType(MEDIA));
+        ResultActions result = mvc.perform(get(URI).param("farmId", expectFarm.getId()).contentType(MEDIA));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(Arrays.asList(expectField_1, expectField_2))));
+                .andExpect(content().json(objMapper.writeValueAsString(expectFieldsDTO)));
     }
 
     @Test
@@ -64,24 +76,24 @@ public class FieldResourceTest {
     void findById_validParams_field() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
-        Field expectField = new Field(fieldId, "Field", 15d);
-        given(fieldService.findByFieldsId(fieldId)).willReturn(expectField);
+        Field expectField = new Field(fieldId, "Field", 15d, new Farm(ObjectId.get().toString()));
+        given(fieldService.findById(fieldId)).willReturn(expectField);
 
         // execution
         ResultActions result = mvc.perform(get(URI + "/{id}", fieldId).contentType(MEDIA));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectField)));
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectField, Field.class))));
     }
 
     @Test
     @DisplayName("Should return 400 and errors messages when post with invalid params.")
     void create_invalidParams_error() throws Exception {
         // scenario
-        String json_1 = objMapper.writeValueAsString(new Field(null, null, 10d));
-        String json_2 = objMapper.writeValueAsString(new Field(null, "F", 10d));
-        String json_3 = objMapper.writeValueAsString(new Field(null, "Field", 0));
+        String json_1 = objMapper.writeValueAsString(FieldDTO.builder().area(10).build());
+        String json_2 = objMapper.writeValueAsString(FieldDTO.builder().name("F").area(10).build());
+        String json_3 = objMapper.writeValueAsString(FieldDTO.builder().name("Field").area(0).build());
 
         // execution
         ResultActions result_1 = mvc.perform(post(URI).contentType(MEDIA).content(json_1));
@@ -94,25 +106,26 @@ public class FieldResourceTest {
         result_2.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message").value("Name must be between 3 and 50 characters."));
         result_3.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("message").value("The area must be greater than zero."));
+                .andExpect(jsonPath("message").value("Area must be greater than zero."));
     }
 
     @Test
     @DisplayName("Should return 201 and field created when post with valid params.")
     void create_validParams_field() throws Exception {
         // scenario
-        String farmId = ObjectId.get().toString();
-        Field expectField = new Field(null, "Field 1", 15d);
-        String json = objMapper.writeValueAsString(expectField);
+        Farm expectFarm = new Farm(ObjectId.get().toString());
+        Field expectField = new Field(ObjectId.get().toString(), "Field 1", 15d, expectFarm);
+        Field actualField = new Field(null, "Field 1", 15d, expectFarm);
+        String json = objMapper.writeValueAsString(modMapper.map(actualField, FieldDTO.class));
 
-        given(fieldService.create(expectField, farmId)).willReturn(expectField);
+        given(fieldService.create(actualField, expectFarm.getId())).willReturn(expectField);
 
         // execution
-        ResultActions result = mvc.perform(post(URI).param("farmId", farmId).contentType(MEDIA).content(json));
+        ResultActions result = mvc.perform(post(URI).param("farmId", expectFarm.toString()).contentType(MEDIA).content(json));
 
         // verification
         result.andExpect(status().isCreated())
-                .andExpect(content().json(objMapper.writeValueAsString(expectField)));
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectField, FieldDTO.class))));
     }
 
     @Test
@@ -120,9 +133,9 @@ public class FieldResourceTest {
     void update_invalidParams_errors() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
-        Field expectField = new Field(fieldId, "Field", 15d);
-        String json = objMapper.writeValueAsString(expectField);
-        given(fieldService.update(expectField)).willThrow(ObjectNotFoundException.class);
+        FieldDTO expectFieldDTO = FieldDTO.builder().id(fieldId).name("Field").area(15d).build();
+        String json = objMapper.writeValueAsString(expectFieldDTO);
+        given(fieldService.update(modMapper.map(expectFieldDTO, Field.class))).willThrow(ObjectNotFoundException.class);
 
         // execution
         ResultActions result_1 = mvc.perform(put(URI + "/{id}", fieldId).contentType(MEDIA).content(json));
@@ -146,16 +159,19 @@ public class FieldResourceTest {
     void update_validParams_field() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
-        Field expectField = new Field(fieldId, "Field new", 15d);
-        String json = objMapper.writeValueAsString(expectField);
-        given(fieldService.update(expectField)).willReturn(expectField);
+        Farm expectFarm = new Farm(ObjectId.get().toString());
+        Field expectField = new Field(fieldId, "Field new", 10d, expectFarm);
+        Field actualField = new Field(fieldId, "Field old", 15d, expectFarm);
+        String json = objMapper.writeValueAsString(modMapper.map(actualField, FieldDTO.class));
+
+        given(fieldService.update(actualField)).willReturn(expectField);
 
         // execution
         ResultActions result = mvc.perform(put(URI + "/{id}", fieldId).contentType(MEDIA).content(json));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectField)));
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectField, FieldDTO.class))));
     }
 
     @Test

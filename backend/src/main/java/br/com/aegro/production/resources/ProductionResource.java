@@ -27,7 +27,7 @@ public class ProductionResource {
     ProductionService productionService;
 
     @Autowired
-    ModelMapper modelMapper;
+    ModelMapper modMapper;
 
     public ProductionResource() {
     }
@@ -35,7 +35,7 @@ public class ProductionResource {
     @GetMapping(value = "/{productionId}")
     public ResponseEntity<ProductionDTO> findById(@PathVariable String productionId) {
         Production production = productionService.findById(productionId);
-        ProductionDTO productionDTO = modelMapper.map(production, ProductionDTO.class);
+        ProductionDTO productionDTO = modMapper.map(production, ProductionDTO.class);
 
         return ResponseEntity.ok(productionDTO);
     }
@@ -43,7 +43,7 @@ public class ProductionResource {
     @GetMapping(value = "/findByFarmId")
     public ResponseEntity<List<ProductionDTO>> findByFarmId(@PathParam("farmId") @Valid String farmId) {
         List<Production> list =  productionService.findByFarmId(farmId);
-        List<ProductionDTO> listDto = list.stream().map(x -> modelMapper.map(x, ProductionDTO.class))
+        List<ProductionDTO> listDto = list.stream().map(x -> modMapper.map(x, ProductionDTO.class))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(listDto);
@@ -52,7 +52,7 @@ public class ProductionResource {
     @GetMapping(value = "/findByFieldId")
     public ResponseEntity<List<ProductionDTO>> findByFieldId(@PathParam("fieldId") @Valid String fieldId) {
         List<Production> list =  productionService.findByFieldId(fieldId);
-        List<ProductionDTO> listDto = list.stream().map(x -> modelMapper.map(x, ProductionDTO.class))
+        List<ProductionDTO> listDto = list.stream().map(x -> modMapper.map(x, ProductionDTO.class))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(listDto);
@@ -72,9 +72,9 @@ public class ProductionResource {
 
     @PostMapping
     public ResponseEntity<ProductionDTO> create(@RequestBody @Valid ProductionDTO productionDTO) {
-        Production production = modelMapper.map(productionDTO, Production.class);
+        Production production = modMapper.map(productionDTO, Production.class);
         production = productionService.create(production);
-        productionDTO = modelMapper.map(production, ProductionDTO.class);
+        productionDTO = modMapper.map(production, ProductionDTO.class);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{productionId}")
                     .buildAndExpand(production.getId()).toUri();
@@ -85,10 +85,10 @@ public class ProductionResource {
     @PutMapping(value = "/{productionId}")
     public ResponseEntity<ProductionDTO> update(@RequestBody @Valid ProductionDTO productionDTO,
                                                 @PathVariable String productionId) throws ProductivityException {
-        Production production = modelMapper.map(productionDTO, Production.class);
+        Production production = modMapper.map(productionDTO, Production.class);
         production.setId(productionId);
         production = productionService.update(production);
-        productionDTO = modelMapper.map(production, ProductionDTO.class);
+        productionDTO = modMapper.map(production, ProductionDTO.class);
 
         return ResponseEntity.ok(productionDTO);
     }

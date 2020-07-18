@@ -1,58 +1,28 @@
 package br.com.aegro.production.domain.dto;
 
-import br.com.aegro.production.domain.entities.Farm;
 import io.swagger.annotations.ApiModel;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @ApiModel(description = "Farm master data")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class FarmDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
-
     @NotEmpty(message = "Name cannot be empty.")
     @Length(min = 3, max = 50, message = "Name must be between 3 and 50 characters.")
     private String name;
-
-    private Set<FieldDTO> fields = new HashSet<>();
-
-    public FarmDTO() {
-    }
-
-    public FarmDTO(Farm obj) {
-        this.id = obj.getId();
-        this.name = obj.getName();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<FieldDTO> getFields() {
-        return fields;
-    }
-
-    public void setFields(Set<FieldDTO> fields) {
-        this.fields = fields;
-    }
+    private Set<FieldDTO> fields;
 
     @Override
     public boolean equals(Object o) {

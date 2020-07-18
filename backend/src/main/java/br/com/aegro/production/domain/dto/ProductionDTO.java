@@ -1,54 +1,26 @@
 package br.com.aegro.production.domain.dto;
 
 import io.swagger.annotations.ApiModel;
+import lombok.*;
 
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Objects;
 
 @ApiModel(description = "Production registry")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ProductionDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
-
-    @Min(value = 1, message = "A área deve ser maior que zero.")
+    @Min(value = 1, message = "Area must be greater than zero.")
     private double value;
-
     private double productivity;
-
-    public ProductionDTO() {
-    }
-
-    public ProductionDTO(String id, double value, double productivity) {
-        this.id = id;
-        this.value = value;
-        this.productivity = productivity;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public double getProductivity() {
-        return productivity;
-    }
-
-    public void setProductivity(double productivity) {
-        this.productivity = productivity;
-    }
+    private String fieldId;
 
     @Override
     public boolean equals(Object o) {

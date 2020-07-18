@@ -10,12 +10,13 @@ import org.springframework.context.annotation.Bean;
 public class ProductionApplication {
 
 	@Bean
-	public ModelMapper modelMapper() {
+	public ModelMapper modMapper() {
 		return new ModelMapper();
 	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProductionApplication.class, args);
 	}
+
 
 }

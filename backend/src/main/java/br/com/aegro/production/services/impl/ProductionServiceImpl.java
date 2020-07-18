@@ -1,6 +1,5 @@
 package br.com.aegro.production.services.impl;
 
-import br.com.aegro.production.domain.dto.ProductionDTO;
 import br.com.aegro.production.domain.entities.Production;
 import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
@@ -33,12 +32,20 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
 
     @Override
     public List<Production> findByFieldId(String fieldId) {
-        return productionRepository.findByFieldId(fieldId);
+        List<Production> list = productionRepository.findByFieldId(fieldId);
+        if (list.size() == 0) {
+            throw new ObjectNotFoundException(fieldId);
+        }
+        return list;
     }
 
     @Override
     public List<Production> findByFarmId(String farmId) {
-        return productionRepository.findByFarmId(farmId);
+        List<Production> list = productionRepository.findByFarmId(farmId);
+        if (list.size() == 0) {
+            throw new ObjectNotFoundException(farmId);
+        }
+        return list;
     }
 
     @Override
@@ -60,9 +67,9 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
 
     @Override
     public Production update(Production production) throws ProductivityException {
-        Production transientProduction = findById(production.getId());
-        updateDataFromTo(production, transientProduction);
-        return productionRepository.save(transientProduction);
+        Production persistProduction = findById(production.getId());
+        updateDataFromTo(production, persistProduction);
+        return productionRepository.save(persistProduction);
     }
 
     @Override

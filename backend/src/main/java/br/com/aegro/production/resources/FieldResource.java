@@ -26,7 +26,7 @@ public class FieldResource {
     FieldService fieldService;
 
     @Autowired
-    ModelMapper modelMapper;
+    ModelMapper modMapper;
 
     public FieldResource() {
     }
@@ -35,7 +35,7 @@ public class FieldResource {
     public ResponseEntity<List<FieldDTO>> findByFarmId(@PathParam("farmId") String farmId) {
         List<Field> fields = fieldService.findByFarmId(farmId);
         List<FieldDTO> fieldsDTO = fields.stream()
-                                        .map(x -> modelMapper.map(x, FieldDTO.class))
+                                        .map(x -> modMapper.map(x, FieldDTO.class))
                                         .collect(Collectors.toList());
 
         return ResponseEntity.ok(fieldsDTO);
@@ -43,8 +43,8 @@ public class FieldResource {
 
     @GetMapping(value = "/{fieldId}")
     public ResponseEntity<FieldDTO> findById(@PathVariable String fieldId) {
-        Field field = fieldService.findByFieldsId(fieldId);
-        FieldDTO fieldDTO = modelMapper.map(field, FieldDTO.class);
+        Field field = fieldService.findById(fieldId);
+        FieldDTO fieldDTO = modMapper.map(field, FieldDTO.class);
 
         return ResponseEntity.ok(fieldDTO);
     }
@@ -52,9 +52,9 @@ public class FieldResource {
     @PostMapping
     public ResponseEntity<FieldDTO> create(@RequestBody @Valid FieldDTO fieldDTO,
                                            @PathParam("farmId") @Valid String farmId) {
-        Field field = modelMapper.map(fieldDTO, Field.class);
+        Field field = modMapper.map(fieldDTO, Field.class);
         field = fieldService.create(field, farmId);
-        fieldDTO = modelMapper.map(field, FieldDTO.class);
+        fieldDTO = modMapper.map(field, FieldDTO.class);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")
                 .buildAndExpand(field.getId()).toUri();
@@ -65,10 +65,10 @@ public class FieldResource {
     @PutMapping(value = "/{fieldId}")
     public ResponseEntity<FieldDTO> update(@RequestBody @Valid FieldDTO fieldDTO,
                                            @PathVariable String fieldId) {
-        Field field = modelMapper.map(fieldDTO, Field.class);
+        Field field = modMapper.map(fieldDTO, Field.class);
         field.setId(fieldId);
         field = fieldService.update(field);
-        fieldDTO = modelMapper.map(field, FieldDTO.class);
+        fieldDTO = modMapper.map(field, FieldDTO.class);
 
         return ResponseEntity.ok(fieldDTO);
     }
