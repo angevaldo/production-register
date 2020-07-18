@@ -24,10 +24,6 @@ public class Farm implements Serializable {
     public Farm() {
     }
 
-    public Farm(String id) {
-        this.id = id;
-    }
-
     public Farm(String id, String name) {
         this.id = id;
         this.name = name;

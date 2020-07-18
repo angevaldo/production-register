@@ -36,14 +36,13 @@ public class TestConfig implements CommandLineRunner {
         int nFarms = 2;//(new Random().nextInt(11) + 40); // 40 to 50 Farms
         for (int i=0; i < nFarms; i++) {
             Farm farm = new Farm(null, "Farm " + i);
-            farm = farmRepository.insert(farm);
+            farmRepository.insert(farm);
 
             int nFields = 2;//(new Random().nextInt(41) + 10); // 10 to 50 Fields per Farm
             for (int k=0; k < nFields; k++) {
                 double area = new Random().nextDouble() * 100d + 10d;
                 Field field = new Field(null, "Field " + k, area, farm);
-                farm.getFields().add(field);
-                field = fieldRepository.insert(field);
+                fieldRepository.insert(field);
                 farmRepository.save(farm);
 
                 int nProductions = 2;//(new Random().nextInt(21) + 10); // 10 to 30 Productions per Field

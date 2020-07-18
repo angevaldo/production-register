@@ -22,16 +22,12 @@ public class Field implements Serializable {
     public Field() {
     }
 
-    public Field(String id) {
-        this.id = id;
-    }
-
     public Field(String id, String name, double area, Farm farm) {
-            this.id = id;
+        this.id = id;
         this.name = name;
         this.area = area;
 
-        this.farm = farm;
+        this.setFarm(farm);
     }
 
     public String getId() {
@@ -63,6 +59,7 @@ public class Field implements Serializable {
     }
 
     public void setFarm(Farm farm) {
+        farm.getFields().add(this);
         this.farm = farm;
     }
 

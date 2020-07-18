@@ -41,9 +41,9 @@ public class FieldResource {
         return ResponseEntity.ok(fieldsDTO);
     }
 
-    @GetMapping(value = "/{fieldId}")
-    public ResponseEntity<FieldDTO> findById(@PathVariable String fieldId) {
-        Field field = fieldService.findById(fieldId);
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<FieldDTO> findById(@PathVariable String id) {
+        Field field = fieldService.findById(id);
         FieldDTO fieldDTO = modMapper.map(field, FieldDTO.class);
 
         return ResponseEntity.ok(fieldDTO);
@@ -62,20 +62,20 @@ public class FieldResource {
         return ResponseEntity.created(uri).body(fieldDTO);
     }
 
-    @PutMapping(value = "/{fieldId}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<FieldDTO> update(@RequestBody @Valid FieldDTO fieldDTO,
-                                           @PathVariable String fieldId) {
+                                           @PathVariable String id) {
         Field field = modMapper.map(fieldDTO, Field.class);
-        field.setId(fieldId);
+        field.setId(id);
         field = fieldService.update(field);
         fieldDTO = modMapper.map(field, FieldDTO.class);
 
         return ResponseEntity.ok(fieldDTO);
     }
 
-    @DeleteMapping(value = "/{fieldId}")
-    public void deleteById(@PathVariable String fieldId) {
-        fieldService.deleteById(fieldId);
+    @DeleteMapping(value = "/{id}")
+    public void deleteById(@PathVariable String id) {
+        fieldService.deleteById(id);
     }
 
 }

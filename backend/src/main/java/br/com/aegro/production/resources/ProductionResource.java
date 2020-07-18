@@ -33,8 +33,8 @@ public class ProductionResource {
     }
 
     @GetMapping(value = "/{productionId}")
-    public ResponseEntity<ProductionDTO> findById(@PathVariable String productionId) {
-        Production production = productionService.findById(productionId);
+    public ResponseEntity<ProductionDTO> findById(@PathVariable String id) {
+        Production production = productionService.findById(id);
         ProductionDTO productionDTO = modMapper.map(production, ProductionDTO.class);
 
         return ResponseEntity.ok(productionDTO);
@@ -84,9 +84,9 @@ public class ProductionResource {
 
     @PutMapping(value = "/{productionId}")
     public ResponseEntity<ProductionDTO> update(@RequestBody @Valid ProductionDTO productionDTO,
-                                                @PathVariable String productionId) throws ProductivityException {
+                                                @PathVariable String id) throws ProductivityException {
         Production production = modMapper.map(productionDTO, Production.class);
-        production.setId(productionId);
+        production.setId(id);
         production = productionService.update(production);
         productionDTO = modMapper.map(production, ProductionDTO.class);
 

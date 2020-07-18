@@ -57,7 +57,6 @@ public class FarmResourceTest {
         // scenario
         Farm expectFarm_1 = new Farm(ObjectId.get().toString(), "Farm 1");
         Field expectField = new Field(ObjectId.get().toString(), "Field 1", 10d, expectFarm_1);
-        expectFarm_1.getFields().add(expectField);
         Farm expectFarm_2 = new Farm(ObjectId.get().toString(), "Farm 2");
         List<FarmDTO> expectFarmsDTO = Arrays.asList(expectFarm_1, expectFarm_2).stream()
                 .map(x -> modMapper.map(x, FarmDTO.class))

@@ -26,8 +26,8 @@ public class FieldServiceImpl implements FieldService {
         fieldTo.setName(fieldFrom.getName());
     }
 
-    public FieldServiceImpl(FieldRepository farmRepository, ProductionService productionService) {
-        this.fieldRepository = farmRepository;
+    public FieldServiceImpl(FieldRepository fieldRepository, ProductionService productionService) {
+        this.fieldRepository = fieldRepository;
         this.productionService = productionService;
     }
 
@@ -57,16 +57,19 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public void deleteAll() {
+        productionService.deleteAll();
         fieldRepository.deleteAll();
     }
 
     @Override
     public void deleteById(String id) {
+        productionService.deleteByFieldId(id);
         fieldRepository.deleteById(id);
     }
 
     @Override
     public void deleteByFarmId(String farmId) {
+        productionService.deleteByFarmId(farmId);
         fieldRepository.deleteByFarmId(farmId);
     }
 

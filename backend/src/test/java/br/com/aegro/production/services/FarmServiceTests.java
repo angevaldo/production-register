@@ -34,12 +34,9 @@ public class FarmServiceTests {
     @Mock
     private FieldService fieldService;
 
-    @Mock
-    private ProductionService productionService;
-
     @BeforeEach
     public void setUp() {
-        this.farmService = new FarmServiceImpl(farmRepository, fieldService, productionService);
+        this.farmService = new FarmServiceImpl(farmRepository, fieldService);
     }
 
     @Test
@@ -57,9 +54,9 @@ public class FarmServiceTests {
     @DisplayName("Should return all farms.")
     public void findAll_void_farmsList() {
         // scenario
-        Farm farm1 = new Farm(ObjectId.get().toString(), "Farm 1");
-        Farm farm2 = new Farm(ObjectId.get().toString(), "Farm 2");
-        List<Farm> expectedFarms = new ArrayList<>(Arrays.asList(farm1, farm2));
+        Farm farm_1 = new Farm(ObjectId.get().toString(), "Farm 1");
+        Farm farm_2 = new Farm(ObjectId.get().toString(), "Farm 2");
+        List<Farm> expectedFarms = new ArrayList<>(Arrays.asList(farm_1, farm_2));
 
         when(farmRepository.findAll()).thenReturn(expectedFarms);
 
@@ -132,7 +129,7 @@ public class FarmServiceTests {
 
         // verification
         verify(farmRepository, times(1)).deleteAll();
-        verify(productionService, times(1)).deleteAll();
+        verify(fieldService, times(1)).deleteAll();
     }
 
     @Test
@@ -146,7 +143,7 @@ public class FarmServiceTests {
 
         // verification
         verify(farmRepository, times(1)).deleteById(eq(farmId));
-        verify(productionService, times(1)).deleteByFarmId(eq(farmId));
+        verify(fieldService, times(1)).deleteByFarmId(eq(farmId));
     }
 
 }
