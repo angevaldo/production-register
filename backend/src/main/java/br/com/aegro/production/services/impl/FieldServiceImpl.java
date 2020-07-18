@@ -3,6 +3,7 @@ package br.com.aegro.production.services.impl;
 import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.domain.repositories.FieldRepository;
+import br.com.aegro.production.services.FarmService;
 import br.com.aegro.production.services.FieldService;
 import br.com.aegro.production.services.ProductionService;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
@@ -20,6 +21,9 @@ public class FieldServiceImpl implements FieldService {
     FieldRepository fieldRepository;
 
     @Autowired
+    FarmService farmService;
+
+    @Autowired
     ProductionService productionService;
 
     private void updateFieldDataFromTo(Field fieldFrom, Field fieldTo) {
@@ -27,8 +31,9 @@ public class FieldServiceImpl implements FieldService {
         fieldTo.setName(fieldFrom.getName());
     }
 
-    public FieldServiceImpl(@Lazy FieldRepository fieldRepository, @Lazy ProductionService productionService) {
+    public FieldServiceImpl(@Lazy FieldRepository fieldRepository, @Lazy FarmService farmService, @Lazy ProductionService productionService) {
         this.fieldRepository = fieldRepository;
+        this.farmService = farmService;
         this.productionService = productionService;
     }
 
@@ -44,8 +49,9 @@ public class FieldServiceImpl implements FieldService {
     }
 
     @Override
-    public Field create(Field field, String farmId) {
-        field.setFarm(new Farm(farmId, null));
+    public Field create(Field field) {
+        Farm farm = farmService.findById(field.getFarm().getId());
+        field.setFarm(farm);
         return fieldRepository.insert(field);
     }
 

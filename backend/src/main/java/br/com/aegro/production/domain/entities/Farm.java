@@ -49,10 +49,6 @@ public class Farm implements Serializable {
         return fields;
     }
 
-    public void setFields(Set<Field> fields) {
-        this.fields = fields;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -24,6 +24,8 @@ public class FieldDTO implements Serializable {
     private String name;
     @Min(value = 1, message = "Area must be greater than zero.")
     private double area;
+    @NotEmpty(message = "Farm id cannot be empty.")
+    private String farmId;
 
     @Override
     public boolean equals(Object o) {

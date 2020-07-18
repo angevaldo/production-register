@@ -30,9 +30,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -77,36 +76,55 @@ public class ProductionResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 200 and productions json when get with valid params.")
+    @DisplayName("Should return 200 and productions json when get with valid farm param.")
     void findByFarmId_validParams_productions() throws Exception {
         // scenario
-        List<ProductionDTO> expectProductionsDTO = productions.stream()
+        List<ProductionDTO> expectProdsDTO = productions.stream()
                 .map(x -> modMapper.map(x, ProductionDTO.class))
                 .collect(Collectors.toList());
         given(productionService.findByFarmId(farm.getId())).willReturn(productions);
 
         // execution
         ResultActions result = mvc.perform(get(URI + "/findByFarmId")
-                                    .param("farmId", farm.getId()).contentType(MEDIA));
+                .param("farmId", farm.getId()).contentType(MEDIA));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectProductionsDTO)));
+                .andExpect(content().json(objMapper.writeValueAsString(expectProdsDTO)));
+    }
+
+    @Test
+    @DisplayName("Should return 200 and productions json when get with valid field param.")
+    void findByFieldId_validParams_productions() throws Exception {
+        // scenario
+        List<Production> expectProd = Arrays.asList(prod_1_1, prod_1_2);
+        List<ProductionDTO> expectProdsDTO = expectProd.stream()
+                .map(x -> modMapper.map(x, ProductionDTO.class))
+                .collect(Collectors.toList());
+        given(productionService.findByFieldId(field_1.getId())).willReturn(expectProd);
+
+        // execution
+        ResultActions result = mvc.perform(get(URI + "/findByFieldId")
+                .param("fieldId", field_1.getId()).contentType(MEDIA));
+
+        // verification
+        result.andExpect(status().isOk())
+                .andExpect(content().json(objMapper.writeValueAsString(expectProdsDTO)));
     }
 
     @Test
     @DisplayName("Should return 200 and production json when get with valid params.")
     void findById_validParams_production() throws Exception {
         // scenario
-        Production expectProduction = prod_1_1;
-        given(productionService.findById(prod_1_1.getId())).willReturn(expectProduction);
+        Production expectProd = prod_1_1;
+        given(productionService.findById(prod_1_1.getId())).willReturn(expectProd);
 
         // execution
         ResultActions result = mvc.perform(get(URI + "/{id}", prod_1_1.getId()).contentType(MEDIA));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProduction, ProductionDTO.class))));
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProd, ProductionDTO.class))));
     }
 
     @Test
@@ -121,7 +139,7 @@ public class ProductionResourceTest {
         // execution
         ResultActions result_1 = mvc.perform(post(URI).contentType(MEDIA).content(json_1));
         ResultActions result_2 = mvc.perform(post(URI).contentType(MEDIA).content(json_2));
-        ResultActions result_3 = mvc.perform(post(URI).contentType(MEDIA).content(json_3));
+        mvc.perform(post(URI).contentType(MEDIA).content(json_3));
 
         // verification
         result_1.andExpect(status().isBadRequest())
@@ -131,34 +149,33 @@ public class ProductionResourceTest {
         assertThrows(ObjectNotFoundException.class, () -> productionService.create(prod_1_2));
     }
 
-/*
     @Test
     @DisplayName("Should return 201 and production created when post with valid params.")
     void create_validParams_production() throws Exception {
         // scenario
-        Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
-        Production expectProduction = new Production(ObjectId.get().toString(), "Production 1", 15d, farm);
-        Production actualProduction = new Production(null, "Production 1", 15d, farm);
-        String json = objMapper.writeValueAsString(modMapper.map(actualProduction, ProductionDTO.class));
+        Production expectProd = prod_1_2;
+        Production actualProd = prod_1_1;
+        String json = objMapper.writeValueAsString(modMapper.map(actualProd, ProductionDTO.class));
 
-        given(productionService.create(actualProduction, farm.getId())).willReturn(expectProduction);
+        given(productionService.create(actualProd)).willReturn(expectProd);
 
         // execution
-        ResultActions result = mvc.perform(post(URI).param("farmId", farm.getId()).contentType(MEDIA).content(json));
+        ResultActions result = mvc.perform(post(URI).contentType(MEDIA).content(json));
 
         // verification
         result.andExpect(status().isCreated())
-                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProduction, ProductionDTO.class))));
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProd, ProductionDTO.class))));
     }
 
+/*
     @Test
     @DisplayName("Should return 40* and errors when put with invalid params.")
     void update_invalidParams_errors() throws Exception {
         // scenario
         String productionId = ObjectId.get().toString();
-        ProductionDTO expectProductionDTO = ProductionDTO.builder().id(productionId).name("Production").area(15d).build();
-        String json = objMapper.writeValueAsString(expectProductionDTO);
-        given(productionService.update(modMapper.map(expectProductionDTO, Production.class))).willThrow(ObjectNotFoundException.class);
+        ProductionDTO expectProdDTO = ProductionDTO.builder().id(productionId).name("Production").area(15d).build();
+        String json = objMapper.writeValueAsString(expectProdDTO);
+        given(productionService.update(modMapper.map(expectProdDTO, Production.class))).willThrow(ObjectNotFoundException.class);
 
         // execution
         ResultActions result_1 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content(json));
@@ -183,19 +200,20 @@ public class ProductionResourceTest {
         // scenario
         String productionId = ObjectId.get().toString();
         Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
-        Production expectProduction = new Production(productionId, "Production new", 10d, farm);
-        ProductionDTO expectProductionDTO = modMapper.map(expectProduction, ProductionDTO.class);
-        String json = objMapper.writeValueAsString(expectProductionDTO);
+        Production expectProd = new Production(productionId, "Production new", 10d, farm);
+        ProductionDTO expectProdDTO = modMapper.map(expectProd, ProductionDTO.class);
+        String json = objMapper.writeValueAsString(expectProdDTO);
 
-        given(productionService.update(expectProduction)).willReturn(expectProduction);
+        given(productionService.update(expectProd)).willReturn(expectProd);
 
         // execution
         ResultActions result = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content(json));
 
         // verification
         result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectProductionDTO)));
+                .andExpect(content().json(objMapper.writeValueAsString(expectProdDTO)));
     }
+*/
 
     @Test
     @DisplayName("Should return 200 when delete with valid params.")
@@ -210,5 +228,4 @@ public class ProductionResourceTest {
         result.andExpect(status().isOk());
         verify(productionService, times(1)).deleteById(productionId);
     }
-*/
 }

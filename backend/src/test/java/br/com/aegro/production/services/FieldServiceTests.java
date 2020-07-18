@@ -32,11 +32,14 @@ public class FieldServiceTests {
     private FieldRepository fieldRepository;
 
     @Mock
+    private FarmService farmService;
+
+    @Mock
     private ProductionService productionService;
 
     @BeforeEach
     public void setUp() {
-        this.fieldService = new FieldServiceImpl(fieldRepository, productionService);
+        this.fieldService = new FieldServiceImpl(fieldRepository, farmService, productionService);
     }
 
     @Test
@@ -57,14 +60,15 @@ public class FieldServiceTests {
         Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
         Field field1 = new Field(ObjectId.get().toString(), "Field 1", 10d, farm);
         Field field2 = new Field(ObjectId.get().toString(), "Field 2", 20d, farm);
+        List<Field> expectFields = Arrays.asList(field1, field2);
 
-        when(fieldRepository.findByFarmId(farm.getId())).thenReturn(Arrays.asList(field1, field2));
+        when(fieldRepository.findByFarmId(farm.getId())).thenReturn(expectFields);
 
         // execution
         List<Field> actualFields = fieldService.findByFarmId(farm.getId());
 
         // verification
-        assertTrue(actualFields.containsAll(farm.getFields()));
+        assertTrue(actualFields.containsAll(expectFields));
     }
 
     @Test
@@ -94,10 +98,11 @@ public class FieldServiceTests {
         Field expectedField = new Field(ObjectId.get().toString(), "Field 1", 10d, farm);
         Field actualField = new Field(null, "Field 1", 10d, farm);
 
+        when(farmService.findById(farm.getId())).thenReturn(farm);
         when(fieldRepository.insert(actualField)).thenReturn(expectedField);
 
         // execution
-        actualField = fieldService.create(actualField, farm.getId());
+        actualField = fieldService.create(actualField);
 
         // verification
         assertEquals(expectedField.getId(), actualField.getId());

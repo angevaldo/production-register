@@ -10,7 +10,7 @@ public interface FieldService {
 
     Field findById(String fieldId);
 
-    Field create(Field field, String farmId);
+    Field create(Field field);
 
     Field update(Field field);
 
