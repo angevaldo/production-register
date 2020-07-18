@@ -1,10 +1,13 @@
 package br.com.aegro.production.services.impl;
 
+import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.domain.entities.Production;
-import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
+import br.com.aegro.production.services.FieldService;
+import br.com.aegro.production.services.exceptions.ProductivityException;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +19,23 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     @Autowired
     ProductionRepository productionRepository;
 
-    private void updateDataFromTo(Production productionFrom, Production productionTo) throws ProductivityException {
+    @Autowired
+    FieldService fieldService;
+
+    private void updateDataFromTo(Production productionFrom, Production productionTo) {
         productionFrom.setValue(productionTo.getValue());
     }
 
-    public ProductionServiceImpl(ProductionRepository productionRepository) {
+    private double calculateProductivity(List<Production> productions) throws ProductivityException {
+        if (productions.size() == 0) {
+            throw new ProductivityException();
+        }
+        return productions.stream().mapToDouble(x -> x.getValue() / x.getField().getArea()).sum();
+    }
+
+    public ProductionServiceImpl(@Lazy ProductionRepository productionRepository, @Lazy FieldService fieldService) {
         this.productionRepository = productionRepository;
+        this.fieldService = fieldService;
     }
 
     @Override
@@ -49,19 +63,20 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public double getProductivityByFieldId(String fieldId) {
-        List<Production> productions = findByFieldId(fieldId);
-        return productions.stream().mapToDouble(Production::getProductivity).sum();
+    public double getProductivityByFieldId(String fieldId) throws ProductivityException {
+        return calculateProductivity(findByFieldId(fieldId));
     }
 
     @Override
-    public double getProductivityByFarmId(String farmId) {
-        List<Production> productions = findByFarmId(farmId);
-        return productions.stream().mapToDouble(Production::getProductivity).sum();
+    public double getProductivityByFarmId(String farmId) throws ProductivityException {
+        return calculateProductivity(findByFarmId(farmId));
     }
 
     @Override
     public Production create(Production production) {
+        Field field = fieldService.findById(production.getField().getId());
+        production.setField(field);
+        production.setFarm(field.getFarm());
         return productionRepository.insert(production);
     }
 

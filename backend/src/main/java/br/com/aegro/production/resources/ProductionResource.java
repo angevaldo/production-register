@@ -2,7 +2,7 @@ package br.com.aegro.production.resources;
 
 import br.com.aegro.production.domain.dto.ProductionDTO;
 import br.com.aegro.production.domain.entities.Production;
-import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
+import br.com.aegro.production.services.exceptions.ProductivityException;
 import br.com.aegro.production.services.ProductionService;
 import io.swagger.annotations.Api;
 import org.modelmapper.ModelMapper;
@@ -32,7 +32,7 @@ public class ProductionResource {
     public ProductionResource() {
     }
 
-    @GetMapping(value = "/{productionId}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<ProductionDTO> findById(@PathVariable String id) {
         Production production = productionService.findById(id);
         ProductionDTO productionDTO = modMapper.map(production, ProductionDTO.class);
@@ -59,13 +59,13 @@ public class ProductionResource {
     }
 
     @GetMapping(value = "/productivityByFarmId")
-    public ResponseEntity<Double> getProductivityByFarmId(@PathParam("farmId") @Valid String farmId) {
+    public ResponseEntity<Double> getProductivityByFarmId(@PathParam("farmId") @Valid String farmId) throws ProductivityException {
         double productivity = productionService.getProductivityByFarmId(farmId);
         return ResponseEntity.ok(productivity);
     }
 
     @GetMapping(value = "/productivityByFieldId")
-    public ResponseEntity<Double> getProductivityByFieldId(@PathParam("fieldId") @Valid String fieldId) {
+    public ResponseEntity<Double> getProductivityByFieldId(@PathParam("fieldId") @Valid String fieldId) throws ProductivityException {
         double productivity = productionService.getProductivityByFieldId(fieldId);
         return ResponseEntity.ok(productivity);
     }

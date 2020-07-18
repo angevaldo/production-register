@@ -1,7 +1,7 @@
 package br.com.aegro.production.services;
 
 import br.com.aegro.production.domain.entities.Production;
-import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
+import br.com.aegro.production.services.exceptions.ProductivityException;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ public interface ProductionService {
 
     List<Production> findByFarmId(String farmId);
 
-    double getProductivityByFieldId(String fieldId);
+    double getProductivityByFieldId(String fieldId) throws ProductivityException;
 
-    double getProductivityByFarmId(String farmId);
+    double getProductivityByFarmId(String farmId) throws ProductivityException;
 
     Production create(Production production);
 

@@ -19,7 +19,6 @@ public class ProductionDTO implements Serializable {
     private String id;
     @Min(value = 1, message = "Area must be greater than zero.")
     private double value;
-    private double productivity;
     private String fieldId;
 
     @Override

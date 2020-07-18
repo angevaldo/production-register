@@ -7,6 +7,7 @@ import br.com.aegro.production.services.FieldService;
 import br.com.aegro.production.services.ProductionService;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class FieldServiceImpl implements FieldService {
         fieldTo.setName(fieldFrom.getName());
     }
 
-    public FieldServiceImpl(FieldRepository fieldRepository, ProductionService productionService) {
+    public FieldServiceImpl(@Lazy FieldRepository fieldRepository, @Lazy ProductionService productionService) {
         this.fieldRepository = fieldRepository;
         this.productionService = productionService;
     }

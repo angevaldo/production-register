@@ -3,9 +3,9 @@ package br.com.aegro.production.services;
 import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.domain.entities.Production;
-import br.com.aegro.production.domain.entities.exceptions.ProductivityException;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
+import br.com.aegro.production.services.exceptions.ProductivityException;
 import br.com.aegro.production.services.impl.ProductionServiceImpl;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
@@ -30,25 +31,25 @@ public class ProductionServiceTests {
     @Mock
     private ProductionRepository productionRepository;
 
-    private Farm farm;
+    @Mock
+    private FieldService fieldService;
 
+    private Farm farm;
     private Field field_1;
     private Field field_2;
-
     private Production prod_1_1;
     private Production prod_1_2;
     private Production prod_2_1;
     private final List<Production> productions = new ArrayList<>();
 
     @BeforeEach
-    public void setUp() throws ProductivityException {
-        this.productionService = new ProductionServiceImpl(productionRepository);
+    public void setUp() {
+        this.productionService = new ProductionServiceImpl(productionRepository, fieldService);
 
         this.farm = new Farm(ObjectId.get().toString(), "Farm");
 
         this.field_1 = new Field(ObjectId.get().toString(), "Field 1", 100d, farm);
         this.field_2 = new Field(ObjectId.get().toString(), "Field 2", 250d, farm);
-        this.farm.getFields().addAll(Arrays.asList(field_1, field_2));
 
         this.prod_1_1 = new Production(ObjectId.get().toString(), 50, farm, field_1);
         this.prod_1_2 = new Production(ObjectId.get().toString(), 25, farm, field_1);
@@ -58,7 +59,7 @@ public class ProductionServiceTests {
 
     @Test
     @DisplayName("Should throws exception when invalid filter")
-    public void findById_invalidFilter_notFoundException() throws ProductivityException {
+    public void findById_invalidFilter_notFoundException() {
         // scenario
         Production production = new Production(null, 10d, farm, field_1);
 
@@ -79,7 +80,6 @@ public class ProductionServiceTests {
         // verification
         assertEquals(expectedProduction.getId(), actualProduction.getId());
         assertEquals(expectedProduction.getValue(), actualProduction.getValue());
-        assertEquals(expectedProduction.getProductivity(), actualProduction.getProductivity());
         assertEquals(expectedProduction.getFarm(), actualProduction.getFarm());
         assertEquals(expectedProduction.getField(), actualProduction.getField());
     }
@@ -114,7 +114,7 @@ public class ProductionServiceTests {
 
     @Test
     @DisplayName("Should return the productivity from a field")
-    public void productivityByFieldId_fieldId_productivity()  {
+    public void productivityByFieldId_fieldId_productivity() throws ProductivityException {
         // scenario
         String fieldId = field_1.getId();
         double expectedProductivity = .75d; // productivity = (50/100) + (25/100) = 0,75
@@ -129,7 +129,7 @@ public class ProductionServiceTests {
 
     @Test
     @DisplayName("Should return the productivity from a farm")
-    public void productivityByFarmId_farmId_productivity() {
+    public void productivityByFarmId_farmId_productivity() throws ProductivityException {
         // scenario
         String farmId = farm.getId();
         double expectedProductivity = 1.15d; // productivity = (50/100) + (25/100) + (100/250) = 1,15
@@ -144,10 +144,11 @@ public class ProductionServiceTests {
 
     @Test
     @DisplayName("Should create and return a new production.")
-    public void create_production_production() throws ProductivityException {
+    public void create_production_production() {
         // scenario
         Production expectedProduction = prod_2_1;
         Production actualProduction = new Production(null, prod_2_1.getValue(), farm, field_2);
+        when(fieldService.findById(field_2.getId())).thenReturn(field_2);
         when(productionRepository.insert(actualProduction)).thenReturn(expectedProduction);
 
         // execution
@@ -156,7 +157,6 @@ public class ProductionServiceTests {
         // verification
         assertEquals(expectedProduction.getId(), actualProduction.getId());
         assertEquals(expectedProduction.getValue(), actualProduction.getValue());
-        assertEquals(expectedProduction.getProductivity(), actualProduction.getProductivity());
         assertEquals(expectedProduction.getFarm(), actualProduction.getFarm());
         assertEquals(expectedProduction.getField(), actualProduction.getField());
     }
@@ -176,7 +176,6 @@ public class ProductionServiceTests {
         // verification
         assertEquals(expectedProduction.getId(), actualProduction.getId());
         assertEquals(expectedProduction.getValue(), actualProduction.getValue());
-        assertEquals(expectedProduction.getProductivity(), actualProduction.getProductivity());
         assertEquals(expectedProduction.getFarm(), actualProduction.getFarm());
         assertEquals(expectedProduction.getField(), actualProduction.getField());
     }

@@ -1,0 +1,214 @@
+package br.com.aegro.production.resources;
+
+import br.com.aegro.production.domain.dto.ProductionDTO;
+import br.com.aegro.production.domain.entities.Farm;
+import br.com.aegro.production.domain.entities.Field;
+import br.com.aegro.production.domain.entities.Production;
+import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
+import br.com.aegro.production.services.exceptions.ProductivityException;
+import br.com.aegro.production.services.ProductionService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.types.ObjectId;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(controllers = ProductionResource.class)
+@ActiveProfiles(value = "test")
+public class ProductionResourceTest {
+
+    static final String URI = "/api/productions";
+    static final MediaType MEDIA = MediaType.APPLICATION_JSON;
+
+    @Autowired
+    MockMvc mvc;
+
+    @Autowired
+    ModelMapper modMapper;
+
+    @Autowired
+    ObjectMapper objMapper;
+
+    @MockBean
+    ProductionService productionService;
+
+    private Farm farm;
+    private Field field_1;
+    private Field field_2;
+    private Production prod_1_1;
+    private Production prod_1_2;
+    private Production prod_2_1;
+    private final List<Production> productions = new ArrayList<>();
+
+    @BeforeEach
+    public void setUp() throws ProductivityException {
+        this.farm = new Farm(ObjectId.get().toString(), "Farm");
+
+        this.field_1 = new Field(ObjectId.get().toString(), "Field 1", 100d, farm);
+        this.field_2 = new Field(ObjectId.get().toString(), "Field 2", 250d, farm);
+
+        this.prod_1_1 = new Production(ObjectId.get().toString(), 50, farm, field_1);
+        this.prod_1_2 = new Production(ObjectId.get().toString(), 25, farm, field_1);
+        this.prod_2_1 = new Production(ObjectId.get().toString(), 100, farm, field_2);
+        this.productions.addAll(Arrays.asList(prod_1_1, prod_1_2, prod_2_1));
+    }
+
+    @Test
+    @DisplayName("Should return 200 and productions json when get with valid params.")
+    void findByFarmId_validParams_productions() throws Exception {
+        // scenario
+        List<ProductionDTO> expectProductionsDTO = productions.stream()
+                .map(x -> modMapper.map(x, ProductionDTO.class))
+                .collect(Collectors.toList());
+        given(productionService.findByFarmId(farm.getId())).willReturn(productions);
+
+        // execution
+        ResultActions result = mvc.perform(get(URI + "/findByFarmId")
+                                    .param("farmId", farm.getId()).contentType(MEDIA));
+
+        // verification
+        result.andExpect(status().isOk())
+                .andExpect(content().json(objMapper.writeValueAsString(expectProductionsDTO)));
+    }
+
+    @Test
+    @DisplayName("Should return 200 and production json when get with valid params.")
+    void findById_validParams_production() throws Exception {
+        // scenario
+        Production expectProduction = prod_1_1;
+        given(productionService.findById(prod_1_1.getId())).willReturn(expectProduction);
+
+        // execution
+        ResultActions result = mvc.perform(get(URI + "/{id}", prod_1_1.getId()).contentType(MEDIA));
+
+        // verification
+        result.andExpect(status().isOk())
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProduction, ProductionDTO.class))));
+    }
+
+    @Test
+    @DisplayName("Should return 400 and errors messages when post with invalid params.")
+    void create_invalidParams_error() throws Exception {
+        // scenario
+        String json_1 = objMapper.writeValueAsString(ProductionDTO.builder().fieldId(prod_1_1.getId()).build());
+        String json_2 = objMapper.writeValueAsString(ProductionDTO.builder().value(0).fieldId(prod_1_1.getId()).build());
+        String json_3 = objMapper.writeValueAsString(modMapper.map(prod_1_2.getId(), Production.class));
+        when(productionService.create(prod_1_2)).thenThrow(ObjectNotFoundException.class);
+
+        // execution
+        ResultActions result_1 = mvc.perform(post(URI).contentType(MEDIA).content(json_1));
+        ResultActions result_2 = mvc.perform(post(URI).contentType(MEDIA).content(json_2));
+        ResultActions result_3 = mvc.perform(post(URI).contentType(MEDIA).content(json_3));
+
+        // verification
+        result_1.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("message").value("Area must be greater than zero."));
+        result_2.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("message").value("Area must be greater than zero."));
+        assertThrows(ObjectNotFoundException.class, () -> productionService.create(prod_1_2));
+    }
+
+/*
+    @Test
+    @DisplayName("Should return 201 and production created when post with valid params.")
+    void create_validParams_production() throws Exception {
+        // scenario
+        Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
+        Production expectProduction = new Production(ObjectId.get().toString(), "Production 1", 15d, farm);
+        Production actualProduction = new Production(null, "Production 1", 15d, farm);
+        String json = objMapper.writeValueAsString(modMapper.map(actualProduction, ProductionDTO.class));
+
+        given(productionService.create(actualProduction, farm.getId())).willReturn(expectProduction);
+
+        // execution
+        ResultActions result = mvc.perform(post(URI).param("farmId", farm.getId()).contentType(MEDIA).content(json));
+
+        // verification
+        result.andExpect(status().isCreated())
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProduction, ProductionDTO.class))));
+    }
+
+    @Test
+    @DisplayName("Should return 40* and errors when put with invalid params.")
+    void update_invalidParams_errors() throws Exception {
+        // scenario
+        String productionId = ObjectId.get().toString();
+        ProductionDTO expectProductionDTO = ProductionDTO.builder().id(productionId).name("Production").area(15d).build();
+        String json = objMapper.writeValueAsString(expectProductionDTO);
+        given(productionService.update(modMapper.map(expectProductionDTO, Production.class))).willThrow(ObjectNotFoundException.class);
+
+        // execution
+        ResultActions result_1 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content(json));
+        ResultActions result_2 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content("{}"));
+        ResultActions result_3 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content("{\"name\":1}"));
+        ResultActions result_4 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA));
+
+        // verification
+        result_1.andExpect(status().isNotFound())
+                .andExpect(jsonPath("error").value("Object not found"));
+        result_2.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error").value("Invalid argument"));
+        result_3.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error").value("Invalid argument"));
+        result_4.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error").value("Object not valid"));
+    }
+
+    @Test
+    @DisplayName("Should return 200 and production saved when put with valid params.")
+    void update_validParams_production() throws Exception {
+        // scenario
+        String productionId = ObjectId.get().toString();
+        Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
+        Production expectProduction = new Production(productionId, "Production new", 10d, farm);
+        ProductionDTO expectProductionDTO = modMapper.map(expectProduction, ProductionDTO.class);
+        String json = objMapper.writeValueAsString(expectProductionDTO);
+
+        given(productionService.update(expectProduction)).willReturn(expectProduction);
+
+        // execution
+        ResultActions result = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content(json));
+
+        // verification
+        result.andExpect(status().isOk())
+                .andExpect(content().json(objMapper.writeValueAsString(expectProductionDTO)));
+    }
+
+    @Test
+    @DisplayName("Should return 200 when delete with valid params.")
+    void delete_validParams_production() throws Exception {
+        // scenario
+        String productionId = ObjectId.get().toString();
+
+        // execution
+        ResultActions result = mvc.perform(delete(URI + "/{id}", productionId).contentType(MEDIA));
+
+        // verification
+        result.andExpect(status().isOk());
+        verify(productionService, times(1)).deleteById(productionId);
+    }
+*/
+}
