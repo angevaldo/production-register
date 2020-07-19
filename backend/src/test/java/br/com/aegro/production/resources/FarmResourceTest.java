@@ -90,7 +90,7 @@ public class FarmResourceTest {
 
     @Test
     @DisplayName("Should return 400 and errors messages when post with invalid params.")
-    void create_invalidParams_error() throws Exception {
+    void insert_invalidParams_error() throws Exception {
         // scenario
         String json_1 = objMapper.writeValueAsString(new Farm(null, null));
         String json_2 = objMapper.writeValueAsString(new Farm(null, "n"));
@@ -107,13 +107,13 @@ public class FarmResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 201 and farm created when post with valid params.")
-    void create_validParams_farm() throws Exception {
+    @DisplayName("Should return 201 when post with valid params.")
+    void insert_validParams_noContent() throws Exception {
         // scenario
         Farm expectFarm = new Farm(ObjectId.get().toString(), "Farm 1");
         FarmDTO actualFarm = modMapper.map(expectFarm, FarmDTO.class);
         String json = objMapper.writeValueAsString(actualFarm);
-        given(farmService.create(Mockito.any(Farm.class))).willReturn(expectFarm);
+        given(farmService.insert(Mockito.any(Farm.class))).willReturn(expectFarm);
 
         // execution
         ResultActions result = mvc.perform(post(URI).contentType(MEDIA).content(json));
@@ -149,8 +149,8 @@ public class FarmResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 204 and farm saved when put with valid params.")
-    void update_validParams_farm() throws Exception {
+    @DisplayName("Should return 204 when put with valid params.")
+    void update_validParams_noContent() throws Exception {
         // scenario
         String farmId = ObjectId.get().toString();
         Farm expectFarm = new Farm(farmId, "Farm new");
@@ -167,7 +167,7 @@ public class FarmResourceTest {
 
     @Test
     @DisplayName("Should return 204 when delete with valid params.")
-    void deleteById_validParams_farm() throws Exception {
+    void deleteById_validParams_noContent() throws Exception {
         // scenario
         String farmId = ObjectId.get().toString();
 

@@ -90,7 +90,7 @@ public class FieldResourceTest {
 
     @Test
     @DisplayName("Should return 400 and errors messages when post with invalid params.")
-    void create_invalidParams_error() throws Exception {
+    void insert_invalidParams_error() throws Exception {
         // scenario
         String json_1 = objMapper.writeValueAsString(FieldDTO.builder().area(10d).farmId("ID").build());
         String json_2 = objMapper.writeValueAsString(FieldDTO.builder().name("F").area(10d).farmId("ID").build());
@@ -115,15 +115,15 @@ public class FieldResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 201 and field created when post with valid params.")
-    void create_validParams_field() throws Exception {
+    @DisplayName("Should return 201 when post with valid params.")
+    void insert_validParams_noContent() throws Exception {
         // scenario
         Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
         Field expectField = new Field(ObjectId.get().toString(), "Field 1", 15d, farm);
         Field actualField = new Field(null, "Field 1", 15d, farm);
         String json = objMapper.writeValueAsString(modMapper.map(actualField, FieldDTO.class));
 
-        given(fieldService.create(actualField)).willReturn(expectField);
+        given(fieldService.insert(actualField)).willReturn(expectField);
 
         // execution
         ResultActions result = mvc.perform(post(URI).param("farmId", farm.getId()).contentType(MEDIA).content(json));
@@ -159,8 +159,8 @@ public class FieldResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 204 and field saved when put with valid params.")
-    void update_validParams_field() throws Exception {
+    @DisplayName("Should return 204 when put with valid params.")
+    void update_validParams_noContent() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
         Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
@@ -179,7 +179,7 @@ public class FieldResourceTest {
 
     @Test
     @DisplayName("Should return 204 when delete with valid params.")
-    void deleteById_validParams_field() throws Exception {
+    void deleteById_validParams_noContent() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
 

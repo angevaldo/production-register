@@ -70,9 +70,9 @@ public class ProductionResource {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid ProductionDTO productionDTO) {
+    public ResponseEntity<Void> insert(@RequestBody @Valid ProductionDTO productionDTO) {
         Production production = modMapper.map(productionDTO, Production.class);
-        production = productionService.create(production);
+        production = productionService.insert(production);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{productionId}")
                     .buildAndExpand(production.getId()).toUri();
 

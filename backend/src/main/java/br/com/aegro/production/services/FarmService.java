@@ -10,7 +10,7 @@ public interface FarmService {
 
     Farm findById(String id);
 
-    Farm create(Farm farm);
+    Farm insert(Farm farm);
 
     Farm update(Farm farm);
 

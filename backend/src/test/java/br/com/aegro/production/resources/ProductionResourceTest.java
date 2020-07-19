@@ -158,12 +158,12 @@ public class ProductionResourceTest {
 
     @Test
     @DisplayName("Should return 400 and errors messages when post with invalid params.")
-    void create_invalidParams_error() throws Exception {
+    void insert_invalidParams_error() throws Exception {
         // scenario
         String json_1 = objMapper.writeValueAsString(ProductionDTO.builder().fieldId(prod_1_1.getId()).build());
         String json_2 = objMapper.writeValueAsString(ProductionDTO.builder().value(0).fieldId(prod_1_1.getId()).build());
         String json_3 = objMapper.writeValueAsString(modMapper.map(prod_1_2.getId(), Production.class));
-        when(productionService.create(prod_1_2)).thenThrow(ObjectNotFoundException.class);
+        when(productionService.insert(prod_1_2)).thenThrow(ObjectNotFoundException.class);
 
         // execution
         ResultActions result_1 = mvc.perform(post(URI).contentType(MEDIA).content(json_1));
@@ -175,18 +175,18 @@ public class ProductionResourceTest {
                 .andExpect(jsonPath("message").value("Area must be greater than zero."));
         result_2.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("message").value("Area must be greater than zero."));
-        assertThrows(ObjectNotFoundException.class, () -> productionService.create(prod_1_2));
+        assertThrows(ObjectNotFoundException.class, () -> productionService.insert(prod_1_2));
     }
 
     @Test
-    @DisplayName("Should return 201 and production created when post with valid params.")
-    void create_validParams_production() throws Exception {
+    @DisplayName("Should return 201 when post with valid params.")
+    void insert_validParams_noContent() throws Exception {
         // scenario
         Production expectProd = prod_1_2;
         Production actualProd = prod_1_1;
         String json = objMapper.writeValueAsString(modMapper.map(actualProd, ProductionDTO.class));
 
-        given(productionService.create(actualProd)).willReturn(expectProd);
+        given(productionService.insert(actualProd)).willReturn(expectProd);
 
         // execution
         ResultActions result = mvc.perform(post(URI).contentType(MEDIA).content(json));

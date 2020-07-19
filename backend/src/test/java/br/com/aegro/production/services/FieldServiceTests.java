@@ -95,8 +95,8 @@ public class FieldServiceTests {
     }
 
     @Test
-    @DisplayName("Should create and return a new field.")
-    public void create_field_field() {
+    @DisplayName("Should insert and return a new field.")
+    public void insert_field_field() {
         // scenario
         Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
         Field expectedField = new Field(ObjectId.get().toString(), "Field 1", 10d, farm);
@@ -106,7 +106,7 @@ public class FieldServiceTests {
         when(fieldRepository.insert(actualField)).thenReturn(expectedField);
 
         // execution
-        actualField = fieldService.create(actualField);
+        actualField = fieldService.insert(actualField);
 
         // verification
         assertEquals(expectedField.getId(), actualField.getId());

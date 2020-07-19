@@ -69,7 +69,7 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public Production create(Production production) {
+    public Production insert(Production production) {
         Field field = fieldService.findById(production.getField().getId());
         production.setField(field);
         production.setFarm(field.getFarm());

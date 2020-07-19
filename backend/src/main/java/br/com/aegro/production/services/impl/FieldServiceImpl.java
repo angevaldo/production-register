@@ -53,7 +53,7 @@ public class FieldServiceImpl implements FieldService {
     }
 
     @Override
-    public Field create(Field field) {
+    public Field insert(Field field) {
         Farm farm = farmService.findById(field.getFarm().getId());
         field.setFarm(farm);
         return fieldRepository.insert(field);

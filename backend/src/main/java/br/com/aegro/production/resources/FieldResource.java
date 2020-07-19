@@ -50,9 +50,9 @@ public class FieldResource {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid FieldDTO fieldDTO) {
+    public ResponseEntity<Void> insert(@RequestBody @Valid FieldDTO fieldDTO) {
         Field field = modMapper.map(fieldDTO, Field.class);
-        field = fieldService.create(field);
+        field = fieldService.insert(field);
         modMapper.map(field, FieldDTO.class);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")

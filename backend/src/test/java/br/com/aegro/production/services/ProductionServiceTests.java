@@ -161,8 +161,8 @@ public class ProductionServiceTests {
     }
 
     @Test
-    @DisplayName("Should create and return a new production.")
-    public void create_production_production() {
+    @DisplayName("Should insert and return a new production.")
+    public void insert_production_production() {
         // scenario
         Production expectedProduction = prod_2_1;
         Production actualProduction = new Production(null, prod_2_1.getValue(), farm, field_2);
@@ -170,7 +170,7 @@ public class ProductionServiceTests {
         when(productionRepository.insert(actualProduction)).thenReturn(expectedProduction);
 
         // execution
-        actualProduction = productionService.create(actualProduction);
+        actualProduction = productionService.insert(actualProduction);
 
         // verification
         assertEquals(expectedProduction.getId(), actualProduction.getId());

@@ -85,8 +85,8 @@ public class FarmServiceTests {
     }
 
     @Test
-    @DisplayName("Should create and return a new farm.")
-    public void create_farm_farm() {
+    @DisplayName("Should insert and return a new farm.")
+    public void insert_farm_farm() {
         // scenario
         String farmId = ObjectId.get().toString();
         Farm expectedFarm = new Farm(farmId, "Farm 1");
@@ -95,7 +95,7 @@ public class FarmServiceTests {
         when(farmRepository.insert(actualFarm)).thenReturn(expectedFarm);
 
         // execution
-        actualFarm = farmService.create(actualFarm);
+        actualFarm = farmService.insert(actualFarm);
 
         // verification
         assertEquals(expectedFarm.getId(), actualFarm.getId());

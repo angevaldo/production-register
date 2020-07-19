@@ -16,7 +16,7 @@ public interface ProductionService {
 
     double getProductivityByFarmId(String farmId);
 
-    Production create(Production production);
+    Production insert(Production production);
 
     Production update(Production production);
 

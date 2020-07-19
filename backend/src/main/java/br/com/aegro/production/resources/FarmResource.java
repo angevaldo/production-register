@@ -50,9 +50,9 @@ public class FarmResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> create(@RequestBody @Valid FarmDTO farmDTO) {
+    public ResponseEntity<Void> insert(@RequestBody @Valid FarmDTO farmDTO) {
         Farm farm = modMapper.map(farmDTO, Farm.class);
-        farm = farmService.create(farm);
+        farm = farmService.insert(farm);
         farmDTO = modMapper.map(farm, FarmDTO.class);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{fieldId}")

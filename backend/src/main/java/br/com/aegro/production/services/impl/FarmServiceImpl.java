@@ -42,7 +42,7 @@ public class FarmServiceImpl implements FarmService {
     }
 
     @Override
-    public Farm create(Farm farm) {
+    public Farm insert(Farm farm) {
         return farmRepository.insert(farm);
     }
 
