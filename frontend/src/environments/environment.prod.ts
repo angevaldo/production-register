@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  baseUrl: 'https://aegro.com.br/',
+  baseApiUrl: 'https://aegro.com.br/api/'
 };
