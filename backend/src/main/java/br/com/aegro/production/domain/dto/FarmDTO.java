@@ -7,7 +7,6 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 @ApiModel(description = "Farm master data")
 @Getter
@@ -22,7 +21,6 @@ public class FarmDTO implements Serializable {
     @NotEmpty(message = "Name cannot be empty.")
     @Length(min = 3, max = 50, message = "Name must be between 3 and 50 characters.")
     private String name;
-    private Set<FieldDTO> fields;
 
     @Override
     public boolean equals(Object o) {

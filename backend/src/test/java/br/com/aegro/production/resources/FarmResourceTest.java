@@ -119,8 +119,7 @@ public class FarmResourceTest {
         ResultActions result = mvc.perform(post(URI).contentType(MEDIA).content(json));
 
         // verification
-        result.andExpect(status().isCreated())
-                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectFarm, FarmDTO.class))));
+        result.andExpect(status().isCreated());
     }
 
     @Test
@@ -150,7 +149,7 @@ public class FarmResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 200 and farm saved when put with valid params.")
+    @DisplayName("Should return 204 and farm saved when put with valid params.")
     void update_validParams_farm() throws Exception {
         // scenario
         String farmId = ObjectId.get().toString();
@@ -163,13 +162,12 @@ public class FarmResourceTest {
         ResultActions result = mvc.perform(put(URI + "/{id}", farmId).contentType(MEDIA).content(json));
 
         // verification
-        result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectFarmDTO)));
+        result.andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("Should return 200 when delete with valid params.")
-    void delete_validParams_farm() throws Exception {
+    @DisplayName("Should return 204 when delete with valid params.")
+    void deleteById_validParams_farm() throws Exception {
         // scenario
         String farmId = ObjectId.get().toString();
 
@@ -177,7 +175,7 @@ public class FarmResourceTest {
         ResultActions result = mvc.perform(delete(URI + "/{id}", farmId).contentType(MEDIA));
 
         // verification
-        result.andExpect(status().isOk());
+        result.andExpect(status().isNoContent());
         verify(farmService, times(1)).deleteById(farmId);
     }
 

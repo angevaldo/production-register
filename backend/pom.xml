@@ -112,6 +112,7 @@
 						<configuration>
 							<excludes>
 								<exclude>br/com/aegro/production/ProductionApplication.class</exclude>
+								<exclude>br/com/aegro/production/resources/exceptions/StandardError.class</exclude>
 								<exclude>br/com/aegro/production/domain/**/**/*.class</exclude>
 							</excludes>
 						</configuration>

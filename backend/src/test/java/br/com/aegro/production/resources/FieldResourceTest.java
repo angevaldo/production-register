@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -129,8 +129,7 @@ public class FieldResourceTest {
         ResultActions result = mvc.perform(post(URI).param("farmId", farm.getId()).contentType(MEDIA).content(json));
 
         // verification
-        result.andExpect(status().isCreated())
-                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectField, FieldDTO.class))));
+        result.andExpect(status().isCreated());
     }
 
     @Test
@@ -160,7 +159,7 @@ public class FieldResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 200 and field saved when put with valid params.")
+    @DisplayName("Should return 204 and field saved when put with valid params.")
     void update_validParams_field() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
@@ -175,13 +174,12 @@ public class FieldResourceTest {
         ResultActions result = mvc.perform(put(URI + "/{id}", fieldId).contentType(MEDIA).content(json));
 
         // verification
-        result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectFieldDTO)));
+        result.andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("Should return 200 when delete with valid params.")
-    void delete_validParams_field() throws Exception {
+    @DisplayName("Should return 204 when delete with valid params.")
+    void deleteById_validParams_field() throws Exception {
         // scenario
         String fieldId = ObjectId.get().toString();
 
@@ -189,7 +187,7 @@ public class FieldResourceTest {
         ResultActions result = mvc.perform(delete(URI + "/{id}", fieldId).contentType(MEDIA));
 
         // verification
-        result.andExpect(status().isOk());
+        result.andExpect(status().isNoContent());
         verify(fieldService, times(1)).deleteById(fieldId);
     }
 

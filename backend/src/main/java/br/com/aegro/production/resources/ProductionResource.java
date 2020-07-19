@@ -2,7 +2,6 @@ package br.com.aegro.production.resources;
 
 import br.com.aegro.production.domain.dto.ProductionDTO;
 import br.com.aegro.production.domain.entities.Production;
-import br.com.aegro.production.services.exceptions.ProductivityException;
 import br.com.aegro.production.services.ProductionService;
 import io.swagger.annotations.Api;
 import org.modelmapper.ModelMapper;
@@ -59,43 +58,41 @@ public class ProductionResource {
     }
 
     @GetMapping(value = "/productivityByFarmId")
-    public ResponseEntity<Double> getProductivityByFarmId(@PathParam("farmId") @Valid String farmId) throws ProductivityException {
+    public ResponseEntity<Double> getProductivityByFarmId(@PathParam("farmId") @Valid String farmId) {
         double productivity = productionService.getProductivityByFarmId(farmId);
         return ResponseEntity.ok(productivity);
     }
 
     @GetMapping(value = "/productivityByFieldId")
-    public ResponseEntity<Double> getProductivityByFieldId(@PathParam("fieldId") @Valid String fieldId) throws ProductivityException {
+    public ResponseEntity<Double> getProductivityByFieldId(@PathParam("fieldId") @Valid String fieldId) {
         double productivity = productionService.getProductivityByFieldId(fieldId);
         return ResponseEntity.ok(productivity);
     }
 
     @PostMapping
-    public ResponseEntity<ProductionDTO> create(@RequestBody @Valid ProductionDTO productionDTO) {
+    public ResponseEntity<Void> create(@RequestBody @Valid ProductionDTO productionDTO) {
         Production production = modMapper.map(productionDTO, Production.class);
         production = productionService.create(production);
-        productionDTO = modMapper.map(production, ProductionDTO.class);
-
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{productionId}")
                     .buildAndExpand(production.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(productionDTO);
+        return ResponseEntity.created(uri).build();
     }
 
-    @PutMapping(value = "/{productionId}")
-    public ResponseEntity<ProductionDTO> update(@RequestBody @Valid ProductionDTO productionDTO,
-                                                @PathVariable String id) throws ProductivityException {
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Void> update(@RequestBody @Valid ProductionDTO productionDTO,
+                                                @PathVariable String id) {
         Production production = modMapper.map(productionDTO, Production.class);
         production.setId(id);
-        production = productionService.update(production);
-        productionDTO = modMapper.map(production, ProductionDTO.class);
+        productionService.update(production);
 
-        return ResponseEntity.ok(productionDTO);
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(path = "/{productionId}")
-    public void deleteById(@PathVariable String productionId) {
-        this.productionService.deleteById(productionId);
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+        productionService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

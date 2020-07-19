@@ -5,7 +5,6 @@ import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.domain.entities.Production;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
-import br.com.aegro.production.services.exceptions.ProductivityException;
 import br.com.aegro.production.services.impl.ProductionServiceImpl;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
@@ -113,23 +111,18 @@ public class ProductionServiceTests {
     }
 
     @Test
-    @DisplayName("Should return the productivity from a field")
-    public void productivityByFieldId_fieldId_productivity() throws ProductivityException {
+    @DisplayName("Should throws exception with invalid farm id passed")
+    public void productivityByFarmId_farmId_exception()  {
         // scenario
-        String fieldId = field_1.getId();
-        double expectedProductivity = .75d; // productivity = (50/100) + (25/100) = 0,75
-        when(productionRepository.findByFieldId(fieldId)).thenReturn(Arrays.asList(prod_1_1, prod_1_2));
-
-        // execution
-        double actualProductivity = productionService.getProductivityByFieldId(fieldId);
+        when(productionRepository.findByFarmId(farm.getId())).thenReturn(new ArrayList<>());
 
         // verification
-        assertEquals(expectedProductivity, actualProductivity);
+        assertThrows(ObjectNotFoundException.class, () -> productionService.getProductivityByFarmId(farm.getId()));
     }
 
     @Test
     @DisplayName("Should return the productivity from a farm")
-    public void productivityByFarmId_farmId_productivity() throws ProductivityException {
+    public void productivityByFarmId_farmId_productivity()  {
         // scenario
         String farmId = farm.getId();
         double expectedProductivity = 1.15d; // productivity = (50/100) + (25/100) + (100/250) = 1,15
@@ -137,6 +130,31 @@ public class ProductionServiceTests {
 
         // execution
         double actualProductivity = productionService.getProductivityByFarmId(farmId);
+
+        // verification
+        assertEquals(expectedProductivity, actualProductivity);
+    }
+
+    @Test
+    @DisplayName("Should throws exception with invalid field id passed")
+    public void productivityByFieldId_fieldId_exception()  {
+        // scenario
+        when(productionRepository.findByFieldId(field_2.getId())).thenReturn(new ArrayList<>());
+
+        // verification
+        assertThrows(ObjectNotFoundException.class, () -> productionService.getProductivityByFieldId(field_2.getId()));
+    }
+
+    @Test
+    @DisplayName("Should return the productivity from a field")
+    public void productivityByFieldId_fieldId_productivity()  {
+        // scenario
+        String fieldId = field_1.getId();
+        double expectedProductivity = .75d; // productivity = (50/100) + (25/100) = 0,75
+        when(productionRepository.findByFieldId(fieldId)).thenReturn(Arrays.asList(prod_1_1, prod_1_2));
+
+        // execution
+        double actualProductivity = productionService.getProductivityByFieldId(fieldId);
 
         // verification
         assertEquals(expectedProductivity, actualProductivity);
@@ -163,7 +181,7 @@ public class ProductionServiceTests {
 
     @Test
     @DisplayName("Should update and return a production.")
-    public void update_production_production() throws ProductivityException {
+    public void update_production_production()  {
         // scenario
         Production expectedProduction = prod_1_1;
         Production actualProduction = new Production(prod_1_1.getId(), 33d, farm, field_1);

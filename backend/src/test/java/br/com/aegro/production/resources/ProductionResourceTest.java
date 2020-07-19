@@ -4,9 +4,8 @@ import br.com.aegro.production.domain.dto.ProductionDTO;
 import br.com.aegro.production.domain.entities.Farm;
 import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.domain.entities.Production;
-import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
-import br.com.aegro.production.services.exceptions.ProductivityException;
 import br.com.aegro.production.services.ProductionService;
+import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +62,7 @@ public class ProductionResourceTest {
     private final List<Production> productions = new ArrayList<>();
 
     @BeforeEach
-    public void setUp() throws ProductivityException {
+    public void setUp()  {
         this.farm = new Farm(ObjectId.get().toString(), "Farm");
 
         this.field_1 = new Field(ObjectId.get().toString(), "Field 1", 100d, farm);
@@ -73,6 +72,21 @@ public class ProductionResourceTest {
         this.prod_1_2 = new Production(ObjectId.get().toString(), 25, farm, field_1);
         this.prod_2_1 = new Production(ObjectId.get().toString(), 100, farm, field_2);
         this.productions.addAll(Arrays.asList(prod_1_1, prod_1_2, prod_2_1));
+    }
+
+    @Test
+    @DisplayName("Should return 200 and production json when get with valid params.")
+    void findById_validParams_production() throws Exception {
+        // scenario
+        Production expectProd = prod_1_1;
+        given(productionService.findById(prod_1_1.getId())).willReturn(expectProd);
+
+        // execution
+        ResultActions result = mvc.perform(get(URI + "/{id}", prod_1_1.getId()).contentType(MEDIA));
+
+        // verification
+        result.andExpect(status().isOk())
+                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProd, ProductionDTO.class))));
     }
 
     @Test
@@ -113,18 +127,33 @@ public class ProductionResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 200 and production json when get with valid params.")
-    void findById_validParams_production() throws Exception {
+    @DisplayName("Should return 200 and productivity when get with valid farm params.")
+    void productivityByFarmId_validParams_productivity() throws Exception {
         // scenario
-        Production expectProd = prod_1_1;
-        given(productionService.findById(prod_1_1.getId())).willReturn(expectProd);
+        double expectProductivity = 1.15d; // productivity = (50/100) + (25/100) + (100/250) = 1,15
+        given(productionService.getProductivityByFarmId(farm.getId())).willReturn(expectProductivity);
 
         // execution
-        ResultActions result = mvc.perform(get(URI + "/{id}", prod_1_1.getId()).contentType(MEDIA));
+        ResultActions result = mvc.perform(get(URI + "/productivityByFarmId")
+                .param("farmId", farm.getId()).contentType(MEDIA));
 
         // verification
-        result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProd, ProductionDTO.class))));
+        result.andExpect(status().isOk()).andExpect(content().json(String.valueOf(expectProductivity)));
+    }
+
+    @Test
+    @DisplayName("Should return 200 and productivity when get with valid field params.")
+    void productivityByFieldId_validParams_productivity() throws Exception {
+        // scenario
+        double expectProductivity = 75d; // productivity = (50/100) + (25/100) = 0,75
+        given(productionService.getProductivityByFieldId(field_1.getId())).willReturn(expectProductivity);
+
+        // execution
+        ResultActions result = mvc.perform(get(URI + "/productivityByFieldId")
+                .param("fieldId", field_1.getId()).contentType(MEDIA));
+
+        // verification
+        result.andExpect(status().isOk()).andExpect(content().json(String.valueOf(expectProductivity)));
     }
 
     @Test
@@ -163,25 +192,25 @@ public class ProductionResourceTest {
         ResultActions result = mvc.perform(post(URI).contentType(MEDIA).content(json));
 
         // verification
-        result.andExpect(status().isCreated())
-                .andExpect(content().json(objMapper.writeValueAsString(modMapper.map(expectProd, ProductionDTO.class))));
+        result.andExpect(status().isCreated());
     }
 
-/*
     @Test
     @DisplayName("Should return 40* and errors when put with invalid params.")
     void update_invalidParams_errors() throws Exception {
         // scenario
-        String productionId = ObjectId.get().toString();
-        ProductionDTO expectProdDTO = ProductionDTO.builder().id(productionId).name("Production").area(15d).build();
+        String prodId = ObjectId.get().toString();
+        ProductionDTO expectProdDTO = ProductionDTO.builder().id(prodId).value(15d).fieldId("ID").build();
         String json = objMapper.writeValueAsString(expectProdDTO);
-        given(productionService.update(modMapper.map(expectProdDTO, Production.class))).willThrow(ObjectNotFoundException.class);
+
+        given(productionService.update(modMapper.map(expectProdDTO, Production.class)))
+                .willThrow(ObjectNotFoundException.class);
 
         // execution
-        ResultActions result_1 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content(json));
-        ResultActions result_2 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content("{}"));
-        ResultActions result_3 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content("{\"name\":1}"));
-        ResultActions result_4 = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA));
+        ResultActions result_1 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA).content(json));
+        ResultActions result_2 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA).content("{}"));
+        ResultActions result_3 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA).content("{\"area\":\"a\"}"));
+        ResultActions result_4 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA));
 
         // verification
         result_1.andExpect(status().isNotFound())
@@ -195,37 +224,35 @@ public class ProductionResourceTest {
     }
 
     @Test
-    @DisplayName("Should return 200 and production saved when put with valid params.")
+    @DisplayName("Should return 204 and production saved when put with valid params.")
     void update_validParams_production() throws Exception {
         // scenario
-        String productionId = ObjectId.get().toString();
-        Farm farm = new Farm(ObjectId.get().toString(), "Farm 1");
-        Production expectProd = new Production(productionId, "Production new", 10d, farm);
+        Production expectProd = prod_2_1;
         ProductionDTO expectProdDTO = modMapper.map(expectProd, ProductionDTO.class);
+        Production actualProd = new Production(prod_2_1.getId(), 23d, farm, field_2);
         String json = objMapper.writeValueAsString(expectProdDTO);
 
-        given(productionService.update(expectProd)).willReturn(expectProd);
+        given(productionService.update(actualProd)).willReturn(expectProd);
 
         // execution
-        ResultActions result = mvc.perform(put(URI + "/{id}", productionId).contentType(MEDIA).content(json));
+        ResultActions result = mvc.perform(put(URI + "/{id}", expectProd.getId())
+                .contentType(MEDIA).content(json));
 
         // verification
-        result.andExpect(status().isOk())
-                .andExpect(content().json(objMapper.writeValueAsString(expectProdDTO)));
+        result.andExpect(status().isNoContent());
     }
-*/
 
     @Test
-    @DisplayName("Should return 200 when delete with valid params.")
-    void delete_validParams_production() throws Exception {
+    @DisplayName("Should return 204 when delete with valid params.")
+    void deleteById_validParams_production() throws Exception {
         // scenario
-        String productionId = ObjectId.get().toString();
+        String prodId = ObjectId.get().toString();
 
         // execution
-        ResultActions result = mvc.perform(delete(URI + "/{id}", productionId).contentType(MEDIA));
+        ResultActions result = mvc.perform(delete(URI + "/{id}", prodId).contentType(MEDIA));
 
         // verification
-        result.andExpect(status().isOk());
-        verify(productionService, times(1)).deleteById(productionId);
+        result.andExpect(status().isNoContent());
+        verify(productionService, times(1)).deleteById(prodId);
     }
 }

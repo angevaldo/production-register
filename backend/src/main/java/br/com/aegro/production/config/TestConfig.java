@@ -6,7 +6,6 @@ import br.com.aegro.production.domain.entities.Production;
 import br.com.aegro.production.domain.repositories.FarmRepository;
 import br.com.aegro.production.domain.repositories.FieldRepository;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +26,6 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private ProductionRepository productionRepository;
 
-    @SneakyThrows
     @Override
     public void run(String... args) {
         //productionRepository.deleteAll();

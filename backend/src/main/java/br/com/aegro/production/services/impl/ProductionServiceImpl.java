@@ -2,9 +2,8 @@ package br.com.aegro.production.services.impl;
 
 import br.com.aegro.production.domain.entities.Field;
 import br.com.aegro.production.domain.entities.Production;
-import br.com.aegro.production.services.FieldService;
-import br.com.aegro.production.services.exceptions.ProductivityException;
 import br.com.aegro.production.domain.repositories.ProductionRepository;
+import br.com.aegro.production.services.FieldService;
 import br.com.aegro.production.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -26,10 +25,7 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
         productionFrom.setValue(productionTo.getValue());
     }
 
-    private double calculateProductivity(List<Production> productions) throws ProductivityException {
-        if (productions.size() == 0) {
-            throw new ProductivityException();
-        }
+    private double calculateProductivity(List<Production> productions) {
         return productions.stream().mapToDouble(x -> x.getValue() / x.getField().getArea()).sum();
     }
 
@@ -63,13 +59,13 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public double getProductivityByFieldId(String fieldId) throws ProductivityException {
-        return calculateProductivity(findByFieldId(fieldId));
+    public double getProductivityByFarmId(String farmId) {
+        return calculateProductivity(findByFarmId(farmId));
     }
 
     @Override
-    public double getProductivityByFarmId(String farmId) throws ProductivityException {
-        return calculateProductivity(findByFarmId(farmId));
+    public double getProductivityByFieldId(String fieldId) {
+        return calculateProductivity(findByFieldId(fieldId));
     }
 
     @Override
@@ -81,7 +77,7 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     }
 
     @Override
-    public Production update(Production production) throws ProductivityException {
+    public Production update(Production production) {
         Production persistProduction = findById(production.getId());
         updateDataFromTo(production, persistProduction);
         return productionRepository.save(persistProduction);

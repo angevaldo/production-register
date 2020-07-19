@@ -50,7 +50,7 @@ public class FarmResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<FarmDTO> create(@RequestBody @Valid FarmDTO farmDTO) {
+    public ResponseEntity<Void> create(@RequestBody @Valid FarmDTO farmDTO) {
         Farm farm = modMapper.map(farmDTO, Farm.class);
         farm = farmService.create(farm);
         farmDTO = modMapper.map(farm, FarmDTO.class);
@@ -58,23 +58,23 @@ public class FarmResource {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{fieldId}")
                     .buildAndExpand(farmDTO.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(farmDTO);
+        return ResponseEntity.created(uri).build();
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<FarmDTO> update(@RequestBody @Valid FarmDTO farmDTO,
+    public ResponseEntity<Void> update(@RequestBody @Valid FarmDTO farmDTO,
                                               @PathVariable("id") String id) {
         Farm farm = modMapper.map(farmDTO, Farm.class);
         farm.setId(id);
-        farm = farmService.update(farm);
-        farmDTO = modMapper.map(farm, FarmDTO.class);
+        farmService.update(farm);
 
-        return ResponseEntity.ok(farmDTO);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteById(@PathVariable String id) {
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
         farmService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

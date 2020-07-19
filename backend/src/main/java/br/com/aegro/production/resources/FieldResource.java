@@ -50,31 +50,31 @@ public class FieldResource {
     }
 
     @PostMapping
-    public ResponseEntity<FieldDTO> create(@RequestBody @Valid FieldDTO fieldDTO) {
+    public ResponseEntity<Void> create(@RequestBody @Valid FieldDTO fieldDTO) {
         Field field = modMapper.map(fieldDTO, Field.class);
         field = fieldService.create(field);
-        fieldDTO = modMapper.map(field, FieldDTO.class);
+        modMapper.map(field, FieldDTO.class);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")
                 .buildAndExpand(field.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(fieldDTO);
+        return ResponseEntity.created(uri).build();
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<FieldDTO> update(@RequestBody @Valid FieldDTO fieldDTO,
+    public ResponseEntity<Void> update(@RequestBody @Valid FieldDTO fieldDTO,
                                            @PathVariable String id) {
         Field field = modMapper.map(fieldDTO, Field.class);
         field.setId(id);
-        field = fieldService.update(field);
-        fieldDTO = modMapper.map(field, FieldDTO.class);
+        fieldService.update(field);
 
-        return ResponseEntity.ok(fieldDTO);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteById(@PathVariable String id) {
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
         fieldService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

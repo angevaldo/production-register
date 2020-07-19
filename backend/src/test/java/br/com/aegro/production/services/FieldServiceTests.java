@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -46,11 +47,14 @@ public class FieldServiceTests {
     @DisplayName("Should throws exception when invalid filter.")
     public void updateAndFindById_invalidFilter_notFoundException() {
         // scenario
-        Field expectedField = new Field(null, null, 0, new Farm(null, null));
+        String farmId = ObjectId.get().toString();
+        Field expectedField = new Field(null, null, 0, new Farm(farmId, null));
+        when(fieldRepository.findByFarmId(farmId)).thenReturn(new ArrayList<>());
 
         // verification
         assertThrows(ObjectNotFoundException.class, () -> fieldService.update(expectedField));
         assertThrows(ObjectNotFoundException.class, () -> fieldService.findById(null));
+        assertThrows(ObjectNotFoundException.class, () -> fieldService.findByFarmId(farmId));
     }
 
     @Test
@@ -146,17 +150,14 @@ public class FieldServiceTests {
     }
 
     @Test
-    @DisplayName("Should delete a field with passed id.")
-    public void deleteById_validId_void() {
-        // scenario
-        String fieldId = ObjectId.get().toString();
-
+    @DisplayName("Should delete all productions.")
+    public void deleteAll_void_void() {
         // execution
-        fieldService.deleteById(fieldId);
+        fieldService.deleteAll();
 
         // verification
-        verify(fieldRepository, times(1)).deleteById(eq(fieldId));
-        verify(productionService, times(1)).deleteByFieldId(eq(fieldId));
+        verify(fieldRepository, times(1)).deleteAll();
+        verify(productionService, times(1)).deleteAll();
     }
 
     @Test
@@ -171,6 +172,20 @@ public class FieldServiceTests {
         // verification
         verify(fieldRepository, times(1)).deleteByFarmId(eq(farmId));
         verify(productionService, times(1)).deleteByFarmId(eq(farmId));
+    }
+
+    @Test
+    @DisplayName("Should delete a field with passed id.")
+    public void deleteById_validId_void() {
+        // scenario
+        String fieldId = ObjectId.get().toString();
+
+        // execution
+        fieldService.deleteById(fieldId);
+
+        // verification
+        verify(fieldRepository, times(1)).deleteById(eq(fieldId));
+        verify(productionService, times(1)).deleteByFieldId(eq(fieldId));
     }
 
 }

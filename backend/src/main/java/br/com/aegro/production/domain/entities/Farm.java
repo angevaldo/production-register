@@ -1,14 +1,10 @@
 package br.com.aegro.production.domain.entities;
 
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Document
 public class Farm implements Serializable {
@@ -17,9 +13,6 @@ public class Farm implements Serializable {
     @Id
     private String id;
     private String name;
-
-    @DBRef(lazy = true)
-    private Set<Field> fields = new HashSet<>();
 
     public Farm() {
     }
@@ -43,10 +36,6 @@ public class Farm implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Set<Field> getFields() {
-        return fields;
     }
 
     @Override

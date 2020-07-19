@@ -39,7 +39,11 @@ public class FieldServiceImpl implements FieldService {
 
     @Override
     public List<Field> findByFarmId(String farmId) {
-        return fieldRepository.findByFarmId(farmId);
+        List<Field> fields = fieldRepository.findByFarmId(farmId);
+        if (fields.size() == 0) {
+            throw new ObjectNotFoundException(farmId);
+        }
+        return fields;
     }
 
     @Override
