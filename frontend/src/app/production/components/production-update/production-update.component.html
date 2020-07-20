@@ -1,0 +1,29 @@
+<h2>Edit Production</h2>
+
+<form [formGroup]="form" novalidate>
+    <mat-list>
+        <mat-list-item>
+            ID: {{ productionId }}
+        </mat-list-item>
+
+        <mat-list-item>
+            <mat-form-field>
+                <input matInput placeholder="Value" type="number" formControlName="value">
+            </mat-form-field>
+        </mat-list-item>
+
+        <mat-list-item>
+            <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="update()">
+                <mat-icon svgIcon="check"></mat-icon> Save
+            </button>
+            &nbsp;
+            <button mat-raised-button color="warn" (click)="deleteById()">
+                <mat-icon svgIcon="trash-can-outline"></mat-icon> Delete
+            </button>
+            &nbsp;
+            <button mat-stroked-button routerLink="/productions">
+                <mat-icon svgIcon="table-large"></mat-icon> Go to Production to list
+            </button>
+        </mat-list-item>
+    </mat-list>
+</form>

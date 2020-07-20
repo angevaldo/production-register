@@ -28,6 +28,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { FarmModule, FarmRoutingModule } from './farm';
 import { FieldModule, FieldRoutingModule } from './field';
+import { ProductionModule, ProductionRoutingModule } from './production';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,8 @@ import { FieldModule, FieldRoutingModule } from './field';
     FarmRoutingModule,
     FieldModule,
     FieldRoutingModule,
+    ProductionModule,
+    ProductionRoutingModule,
     
     AppRoutingModule
   ],

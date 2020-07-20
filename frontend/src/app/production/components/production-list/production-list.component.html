@@ -1,0 +1,54 @@
+<h2>Productions List</h2>
+
+<mat-form-field>
+    <mat-label>Select a Farm</mat-label>
+    <mat-select [(ngModel)]="farmCurrent.id" name="farmSelect" #farmSelect (ngModelChange)="findByFarmId(farmSelect.value)">
+        <mat-option *ngFor="let farm of farms" [value]="farm.id">
+            {{farm.name}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+&nbsp;
+
+<button mat-raised-button color="primary" routerLink="/productions/new">
+    <mat-icon svgIcon="plus-circle"></mat-icon> &nbsp; New Production
+</button>
+
+<br><br>
+
+<div class="mat-elevation-z8">
+    <mat-table [dataSource]="dataSource" matSort>
+        <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: columns;"></mat-row>
+
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-button color="warn" (click)="deleteById(element.id)" style="cursor: pointer">
+                    <mat-icon svgIcon="trash-can-outline" matTooltip="Delete production"></mat-icon>
+                </mat-button>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="value">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Value
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{ element.value | number:'1.2-2' }}
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                ID
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{ element.id }}
+            </mat-cell>
+        </ng-container>
+    </mat-table>
+
+    <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 15, 25]"></mat-paginator>
+</div>
