@@ -2,13 +2,8 @@
 
 ## Run project 
 
-### database (MongoDB https://docs.mongodb.com/manual/)
-Create database 'aegro'.
-
-### Run test coverage
-```
-mvn clean test
-```
+### Config database
+Create database in MongoDB called 'aegro'.
 
 ### Run backend
 
@@ -28,6 +23,11 @@ npm install
 Start angular:
 ```
 npm start
+```
+
+### Run test coverage
+```
+mvn clean test
 ```
 
 ## Tools
