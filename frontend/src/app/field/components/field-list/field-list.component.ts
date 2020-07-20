@@ -58,6 +58,9 @@ export class FieldListComponent implements OnInit {
           this.dataSource.paginator = this.paginator;
         },
         err => {
+          if (err.error.status == "404") {
+            this.dataSource = new MatTableDataSource<Field>(<Field[]>[]);
+          }
           this.snackBar.open(err.error.message, "Error");
         }
       );

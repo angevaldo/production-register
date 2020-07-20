@@ -38,6 +38,9 @@ export class FarmListComponent implements OnInit {
           this.dataSource.paginator = this.paginator;
         },
         err => {
+          if (err.error.status == "404") {
+            this.dataSource = new MatTableDataSource<Farm>(<Farm[]>[]);
+          }
           this.snackBar.open(err.error.message, "Error");
         }
       );

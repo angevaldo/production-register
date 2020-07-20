@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ɵConsole } from '@angular/core';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -72,6 +72,9 @@ export class ProductionListComponent implements OnInit {
           this.dataSource.paginator = this.paginator;
         },
         err => {
+          if (err.error.status == "404") {
+            this.dataSource = new MatTableDataSource<Production>(<Production[]>[]);
+          }
           this.snackBar.open(err.error.message, "Error");
         }
       );
@@ -89,6 +92,9 @@ export class ProductionListComponent implements OnInit {
           this.dataSource.paginator = this.paginator;
         },
         err => {
+          if (err.error.status == "404") {
+            this.dataSource = new MatTableDataSource<Production>(<Production[]>[]);
+          }
           this.snackBar.open(err.error.message, "Error");
         }
       );
