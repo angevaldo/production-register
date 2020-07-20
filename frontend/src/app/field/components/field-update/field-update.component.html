@@ -1,0 +1,28 @@
+<h2>Edit Field</h2>
+
+<form [formGroup]="form" novalidate>
+    <mat-list>
+        <mat-list-item>
+            ID: {{ fieldId }}
+        </mat-list-item>
+        <mat-list-item>
+            <mat-form-field>
+                <input matInput placeholder="Name" formControlName="name">
+            </mat-form-field>
+        </mat-list-item>
+        <mat-list-item>
+            <mat-form-field>
+                <input matInput placeholder="Area" type="number" formControlName="area">
+            </mat-form-field>
+        </mat-list-item>
+        <mat-list-item>
+            <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="update()">
+                <mat-icon svgIcon="check"></mat-icon> Save
+            </button>
+            &nbsp;
+            <button mat-stroked-button routerLink="/fields">
+                <mat-icon svgIcon="table-large"></mat-icon> Go to Field to list
+            </button>
+        </mat-list-item>
+    </mat-list>
+</form>

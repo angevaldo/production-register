@@ -1,7 +1,18 @@
-<h2>Farms List</h2>
+<h2>Fields List from {{farmName}}</h2>
 
-<button mat-raised-button color="primary" routerLink="/farms/new">
-    <mat-icon svgIcon="plus-circle"></mat-icon> &nbsp; New Farm
+<mat-form-field appearance="fill">
+    <mat-label>Choose a Farm</mat-label>
+    <mat-select [(ngModel)]="farmId" name="farmSelect" #farmSelect (ngModelChange)="findByFarmId(farmSelect.value)">
+        <mat-option *ngFor="let farm of farms" [value]="farm.id">
+            {{farm.name}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+&nbsp;
+
+<button mat-raised-button color="primary" routerLink="/fields/new">
+    <mat-icon svgIcon="plus-circle"></mat-icon> &nbsp; New Field
 </button>
 
 <br><br>
@@ -15,7 +26,7 @@
             <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-button color="warn" (click)="deleteById(element.id)" style="cursor: pointer">
-                    <mat-icon svgIcon="trash-can-outline" matTooltip="Delete farm"></mat-icon>
+                    <mat-icon svgIcon="trash-can-outline" matTooltip="Delete field"></mat-icon>
                 </mat-button>
             </mat-cell>
         </ng-container>
@@ -25,9 +36,18 @@
                 Name
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <a routerLink="{{ '/farms/' + element.id }}">
-                    {{ element.name }} 
+                <a routerLink="{{ '/fields/' + element.id }}">
+                    {{ element.name }}
                 </a>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="area">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                Area
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{ element.area | number:'1.2-2' }}
             </mat-cell>
         </ng-container>
 

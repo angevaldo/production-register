@@ -38,8 +38,7 @@ export class FarmListComponent implements OnInit {
           this.dataSource.paginator = this.paginator;
         },
         err => {
-          const msg: string = "Error obtaining farms.";
-          this.snackBar.open(msg, "Error");
+          this.snackBar.open(err.error.message, "Error");
         }
       );
   }
@@ -53,11 +52,7 @@ export class FarmListComponent implements OnInit {
           this.findAll();
         },
         err => {
-          let msg: string = "Try again later.";
-          if (err.status == 400) {
-            msg = err.error.errors.join(' ');
-          }
-          this.snackBar.open(msg, "Error");
+          this.snackBar.open(err.error.message, "Error");
         }
       );
   }

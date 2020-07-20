@@ -3,16 +3,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Farm, FarmService } from '../../../shared';
+import { Field, FieldService } from '../../../shared';
 
 @Component({
-  selector: 'app-farm-update',
-  templateUrl: './farm-update.component.html',
-  styleUrls: ['./farm-update.component.scss']
+  selector: 'app-field-update',
+  templateUrl: './field-update.component.html',
+  styleUrls: ['./field-update.component.scss']
 })
-export class FarmUpdateComponent implements OnInit {
+export class FieldUpdateComponent implements OnInit {
 
-  farmId: string;
+  fieldId: string;
   form: FormGroup;
 
   constructor(
@@ -20,20 +20,21 @@ export class FarmUpdateComponent implements OnInit {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private router: Router,
-    private farmService: FarmService
+    private fieldService: FieldService
   ) { }
 
   ngOnInit(): void {
-    this.farmId = this.route.snapshot.paramMap.get('farmId');
+    this.fieldId = this.route.snapshot.paramMap.get('fieldId');
     this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]]
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      area: ['', [Validators.required]]
     });
 
-    this.findById(this.farmId);
+    this.findById(this.fieldId);
   }
 
   findById(id: string) {
-    this.farmService.findById(id)
+    this.fieldService.findById(id)
       .subscribe(
         data => {
           this.form.get('name').setValue(data.name);
@@ -47,14 +48,14 @@ export class FarmUpdateComponent implements OnInit {
   update() {
     if (this.form.invalid) return;
 
-    const farm: Farm = this.form.value;
+    const field: Field = this.form.value;
 
-    this.farmService.update(this.get(farm))
+    this.fieldService.update(this.get(field))
       .subscribe(
         data => {
-          const msg: string = 'Farm updated with success!';
+          const msg: string = 'Field updated with success!';
           this.snackBar.open(msg, "Success");
-          this.router.navigate(['/farms']);
+          this.router.navigate(['/fields']);
         },
         err => {
           this.snackBar.open(err.error.message, "Error");
@@ -62,10 +63,11 @@ export class FarmUpdateComponent implements OnInit {
       );
   }
 
-  get(data: any): Farm {
-    return new Farm(
+  get(data: any): Field {
+    return new Field(
       data.name,
-      this.farmId
+      data.area,
+      this.fieldId
     );
   }
 

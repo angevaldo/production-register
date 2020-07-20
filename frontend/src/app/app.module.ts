@@ -33,11 +33,12 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { FarmModule, FarmRoutingModule } from './farm';
-import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
+import { FieldModule, FieldRoutingModule } from './field';
 
 @NgModule({
   declarations: [
@@ -79,6 +80,8 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 
     FarmModule,
     FarmRoutingModule,
+    FieldModule,
+    FieldRoutingModule,
     
     AppRoutingModule
   ],

@@ -39,6 +39,3 @@ export const FarmRoutes: Routes = [
 })
 export class FarmRoutingModule {
 }
-
-
-
