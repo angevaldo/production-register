@@ -7,7 +7,18 @@
                 <mat-label>Select a Farm</mat-label>
                 <mat-select formControlName="farmId" name="farmSelect" #farmSelect (ngModelChange)="changeFarmCurrent(farmSelect.value)">
                     <mat-option *ngFor="let farm of farms" [value]="farm.id">
-                        {{farm.name}}
+                        {{ farm.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-list-item>
+
+        <mat-list-item>
+            <mat-form-field>
+                <mat-label>Select a Field</mat-label>
+                <mat-select formControlName="fieldId" name="fieldSelect" #fieldSelect (ngModelChange)="changeFieldCurrent(fieldSelect.value)">
+                    <mat-option *ngFor="let field of fields" [value]="field.id">
+                        {{ field.name }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

@@ -172,9 +172,9 @@ public class ProductionResourceTest {
 
         // verification
         result_1.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("message").value("Area must be greater than zero."));
+                .andExpect(jsonPath("message").value("Value must be greater than zero."));
         result_2.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("message").value("Area must be greater than zero."));
+                .andExpect(jsonPath("message").value("Value must be greater than zero."));
         assertThrows(ObjectNotFoundException.class, () -> productionService.insert(prod_1_2));
     }
 
@@ -209,7 +209,7 @@ public class ProductionResourceTest {
         // execution
         ResultActions result_1 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA).content(json));
         ResultActions result_2 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA).content("{}"));
-        ResultActions result_3 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA).content("{\"area\":\"a\"}"));
+        ResultActions result_3 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA).content("{\"value\":\"a\"}"));
         ResultActions result_4 = mvc.perform(put(URI + "/{id}", prodId).contentType(MEDIA));
 
         // verification
@@ -218,7 +218,7 @@ public class ProductionResourceTest {
         result_2.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("error").value("Invalid argument"));
         result_3.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("error").value("Invalid argument"));
+                .andExpect(jsonPath("error").value("Object not valid"));
         result_4.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("error").value("Object not valid"));
     }

@@ -18,7 +18,25 @@ export class ProductionService {
 
   findByFarmId(farmId: string): Observable<any> {
     return this.http.get(
-      env.baseApiUrl + this.URI + "?farmId=" + farmId
+      env.baseApiUrl + this.URI + "/findByFarmId?farmId=" + farmId
+    );
+  }
+
+  findByFieldId(fieldId: string): Observable<any> {
+    return this.http.get(
+      env.baseApiUrl + this.URI + "/findByFieldId?fieldId=" + fieldId
+    );
+  }
+
+  productivityByFarmId(farmId: string): Observable<any> {
+    return this.http.get(
+      env.baseApiUrl + this.URI + "/productivityByFarmId?farmId=" + farmId
+    );
+  }
+
+  productivityByFieldId(fieldId: string): Observable<any> {
+    return this.http.get(
+      env.baseApiUrl + this.URI + "/productivityByFieldId?fieldId=" + fieldId
     );
   }
 

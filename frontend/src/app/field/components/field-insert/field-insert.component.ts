@@ -56,9 +56,7 @@ export class FieldInsertComponent implements OnInit {
   insert() {
     if (this.form.invalid) return;
 
-    const field: Field = this.form.value;
-
-    this.fieldService.insert(this.get(field))
+    this.fieldService.insert(this.getObjectFromForm(this.form.value))
       .subscribe(
         data => {
           const msg: string = 'Field inserted with success!';
@@ -71,7 +69,7 @@ export class FieldInsertComponent implements OnInit {
       );
   }
 
-  get(data: any): Field {
+  getObjectFromForm(data: any): Field {
     return new Field(
       data.name,
       data.area,

@@ -17,7 +17,7 @@ public class ProductionDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
-    @Min(value = 1, message = "Area must be greater than zero.")
+    @Min(value = 1, message = "Value must be greater than zero.")
     private double value;
     private String fieldId;
 

@@ -53,10 +53,7 @@ export class FieldUpdateComponent implements OnInit {
   update() {
     if (this.form.invalid) return;
 
-    console.log(this.farmCurrent.id)
-    const field: Field = this.form.value;
-
-    this.fieldService.update(this.get(field))
+    this.fieldService.update(this.getObjectFromForm(this.form.value))
       .subscribe(
         data => {
           const msg: string = 'Field updated with success!';
@@ -83,7 +80,7 @@ export class FieldUpdateComponent implements OnInit {
       );
   }
 
-  get(data: any): Field {
+  getObjectFromForm(data: any): Field {
     return new Field(
       data.name,
       data.area,

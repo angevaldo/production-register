@@ -4,7 +4,18 @@
     <mat-label>Select a Farm</mat-label>
     <mat-select [(ngModel)]="farmCurrent.id" name="farmSelect" #farmSelect (ngModelChange)="findByFarmId(farmSelect.value)">
         <mat-option *ngFor="let farm of farms" [value]="farm.id">
-            {{farm.name}}
+            {{ farm.name }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+&nbsp;
+
+<mat-form-field>
+    <mat-label>Select a Field</mat-label>
+    <mat-select [(ngModel)]="fieldCurrent.id" name="fieldSelect" #fieldSelect (ngModelChange)="findByFieldId(fieldSelect.value)">
+        <mat-option *ngFor="let field of fields" [value]="field.id">
+            {{ field.name }}
         </mat-option>
     </mat-select>
 </mat-form-field>
@@ -36,7 +47,9 @@
                 Value
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                {{ element.value | number:'1.2-2' }}
+                <a routerLink="{{ '/productions/' + element.id }}">
+                    {{ element.value | number:'1.2-2' }}
+                </a>
             </mat-cell>
         </ng-container>
 

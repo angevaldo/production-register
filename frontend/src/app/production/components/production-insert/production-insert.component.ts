@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Production, ProductionService, Farm, FarmService } from '../../../shared';
+import { Production, ProductionService, Farm, FarmService, FieldService, Field } from '../../../shared';
 import { SharedService } from '../../services';
 
 @Component({
@@ -16,6 +16,8 @@ export class ProductionInsertComponent implements OnInit {
   form: FormGroup;
   farms: Farm[];
   farmCurrent: Farm;
+  fields: Field[];
+  fieldCurrent: Field;
 
   constructor(
     private fb: FormBuilder,
@@ -23,18 +25,21 @@ export class ProductionInsertComponent implements OnInit {
     private router: Router,
     private productionService: ProductionService,
     private farmService: FarmService,
+    private fieldService: FieldService,
     private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
-    this.findAllFarms();
-
     this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
+    this.sharedService.sharedField.subscribe(fieldCurrent => this.fieldCurrent = fieldCurrent);
+
+    this.findAllFarms();
+    this.updateDataTable();
 
     this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      area: ['', [Validators.required]],
-      farmId: [this.farmCurrent.id, [Validators.required]]
+      value: ['', [Validators.required]],
+      farmId: [this.farmCurrent.id],
+      fieldId: [this.fieldCurrent.id, [Validators.required]]
     });
   }
 
@@ -43,6 +48,18 @@ export class ProductionInsertComponent implements OnInit {
     this.farmCurrent.id = farm.id;
     this.farmCurrent.name = farm.name;
     this.sharedService.nextFarm(this.farmCurrent);
+
+    this.fieldCurrent = new Field('?', null, farmId);
+    this.sharedService.nextField(this.fieldCurrent);
+    this.findFieldsByFarmId(farmId);
+  }
+
+  changeFieldCurrent(fieldId: string) {
+    const field: Field = this.fields.find(s => s.id == fieldId);
+    this.fieldCurrent.id = field.id;
+    this.fieldCurrent.name = field.name;
+    this.fieldCurrent.area = field.area;
+    this.sharedService.nextField(this.fieldCurrent);
   }
 
   findAllFarms() {
@@ -53,12 +70,18 @@ export class ProductionInsertComponent implements OnInit {
       );
   }
 
+  findFieldsByFarmId(farmId: string) {
+    this.fieldService.findByFarmId(farmId)
+      .subscribe(
+        data => { this.fields = data as Field[]; },
+        err => { this.snackBar.open(err.error.message, "Error"); }
+      );
+  }
+
   insert() {
     if (this.form.invalid) return;
-
-    const production: Production = this.form.value;
-
-    this.productionService.insert(this.get(production))
+    
+    this.productionService.insert(this.getObjectFromForm(this.form.value))
       .subscribe(
         data => {
           const msg: string = 'Production inserted with success!';
@@ -71,12 +94,18 @@ export class ProductionInsertComponent implements OnInit {
       );
   }
 
-  get(data: any): Production {
+  getObjectFromForm(data: any): Production {
     return new Production(
-      data.area,
-      data.farmId,
+      data.value,
+      data.fieldId,
       null
     );
+  }
+
+  updateDataTable() {
+    if (this.farmCurrent.id) {
+      this.findFieldsByFarmId(this.farmCurrent.id);
+    }
   }
 
 }

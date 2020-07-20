@@ -30,9 +30,7 @@ export class FarmInsertComponent implements OnInit {
   insert() {
   	if (this.form.invalid) return;
 
-    const farm: Farm = this.form.value;
-
-    this.farmService.insert(farm)
+    this.farmService.insert(this.getObjectFromForm(this.form.value))
       .subscribe(
         data => {
           const msg: string = 'Farm inserted with success!';
@@ -43,6 +41,13 @@ export class FarmInsertComponent implements OnInit {
           this.snackBar.open(err.error.message, "Error");
         }
       );
+  }
+
+  getObjectFromForm(data: any): Farm {
+    return new Farm(
+      data.name,
+      null
+    );
   }
 
 }

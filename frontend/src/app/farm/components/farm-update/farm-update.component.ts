@@ -47,9 +47,7 @@ export class FarmUpdateComponent implements OnInit {
   update() {
     if (this.form.invalid) return;
 
-    const farm: Farm = this.form.value;
-
-    this.farmService.update(this.get(farm))
+    this.farmService.update(this.getObjectFromForm(this.form.value))
       .subscribe(
         data => {
           const msg: string = 'Farm updated with success!';
@@ -62,7 +60,7 @@ export class FarmUpdateComponent implements OnInit {
       );
   }
 
-  get(data: any): Farm {
+  getObjectFromForm(data: any): Farm {
     return new Farm(
       data.name,
       this.farmId

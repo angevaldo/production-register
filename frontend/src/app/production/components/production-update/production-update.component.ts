@@ -50,11 +50,8 @@ export class ProductionUpdateComponent implements OnInit {
 
   update() {
     if (this.form.invalid) return;
-
-    console.log(this.farmCurrent.id)
-    const production: Production = this.form.value;
-
-    this.productionService.update(this.get(production))
+    
+    this.productionService.update(this.getObjectFromForm(this.form.value))
       .subscribe(
         data => {
           const msg: string = 'Production updated with success!';
@@ -81,7 +78,7 @@ export class ProductionUpdateComponent implements OnInit {
       );
   }
 
-  get(data: any): Production {
+  getObjectFromForm(data: any): Production {
     return new Production(
       data.value,
       this.farmCurrent.id,
