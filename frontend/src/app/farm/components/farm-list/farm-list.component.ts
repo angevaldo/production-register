@@ -8,11 +8,11 @@ import { MatSort } from '@angular/material/sort';
 import { FarmService, Farm } from '../../../shared';
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  selector: 'app-farm-list',
+  templateUrl: './farm-list.component.html',
+  styleUrls: ['./farm-list.component.scss']
 })
-export class ListComponent implements OnInit {
+export class FarmListComponent implements OnInit {
 
   dataSource: MatTableDataSource<Farm>;
   columns: string[] = ['actions', 'name', 'id'];

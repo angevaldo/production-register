@@ -6,11 +6,11 @@ import { Router } from '@angular/router';
 import { Farm, FarmService } from '../../../shared';
 
 @Component({
-  selector: 'app-create',
-  templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss']
+  selector: 'app-farm-insert',
+  templateUrl: './farm-insert.component.html',
+  styleUrls: ['./farm-insert.component.scss']
 })
-export class CreateComponent implements OnInit {
+export class FarmInsertComponent implements OnInit {
 
   form: FormGroup;
 

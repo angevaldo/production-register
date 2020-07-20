@@ -2,28 +2,28 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { 
-	FarmComponent,
-	CreateComponent, 
-	ListComponent ,
-	UpdateComponent,
+	FarmWrapperComponent,
+	FarmInsertComponent, 
+	FarmListComponent,
+	FarmUpdateComponent,
 } from './components';
 
 export const FarmRoutes: Routes = [
 	{
 		path: 'farms',
-		component: FarmComponent,
+		component: FarmWrapperComponent,
 		children: [
 		  {
 			path: '', 
-			component: ListComponent 
+			component: FarmListComponent 
 		  },
 		  {
 			path: 'new', 
-			component: CreateComponent 
+			component: FarmInsertComponent 
 		  },
 		  {
 			path: ':farmId', 
-			component: UpdateComponent 
+			component: FarmUpdateComponent 
 		  }
 		]
 	}

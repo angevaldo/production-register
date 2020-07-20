@@ -6,11 +6,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Farm, FarmService } from '../../../shared';
 
 @Component({
-  selector: 'app-update',
-  templateUrl: './update.component.html',
-  styleUrls: ['./update.component.scss']
+  selector: 'app-farm-update',
+  templateUrl: './farm-update.component.html',
+  styleUrls: ['./farm-update.component.scss']
 })
-export class UpdateComponent implements OnInit {
+export class FarmUpdateComponent implements OnInit {
 
   farmId: string;
   form: FormGroup;

@@ -16,17 +16,16 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 
-import { CreateComponent, ListComponent, FarmComponent } from './components';
+import { FarmInsertComponent, FarmListComponent, FarmUpdateComponent, FarmWrapperComponent } from './components';
 
 import { FarmService } from '../shared';
-import { UpdateComponent } from './components/update/update.component';
 
 @NgModule({
   declarations: [
-    CreateComponent, 
-    ListComponent,
-    FarmComponent,
-    UpdateComponent
+    FarmInsertComponent, 
+    FarmListComponent,
+    FarmUpdateComponent,
+    FarmWrapperComponent
   ],
   imports: [
     CommonModule,
