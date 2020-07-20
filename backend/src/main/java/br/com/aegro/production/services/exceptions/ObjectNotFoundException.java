@@ -7,7 +7,7 @@ public class ObjectNotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	public ObjectNotFoundException(Object ... id) {
-		super("Resource not found. Id(s): " + Arrays.asList(id));
+		super("Resource(s) not found for Id(s): " + Arrays.asList(id));
 	}
 
 }

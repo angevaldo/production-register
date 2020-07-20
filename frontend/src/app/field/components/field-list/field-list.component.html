@@ -1,8 +1,8 @@
-<h2>Fields List from {{farmName}}</h2>
+<h2>Fields List</h2>
 
-<mat-form-field appearance="fill">
-    <mat-label>Choose a Farm</mat-label>
-    <mat-select [(ngModel)]="farmId" name="farmSelect" #farmSelect (ngModelChange)="findByFarmId(farmSelect.value)">
+<mat-form-field>
+    <mat-label>Select a Farm</mat-label>
+    <mat-select [(ngModel)]="farmCurrent.id" name="farmSelect" #farmSelect (ngModelChange)="findByFarmId(farmSelect.value)">
         <mat-option *ngFor="let farm of farms" [value]="farm.id">
             {{farm.name}}
         </mat-option>
@@ -53,7 +53,7 @@
 
         <ng-container matColumnDef="id">
             <mat-header-cell *matHeaderCellDef mat-sort-header>
-                Id
+                ID
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 {{ element.id }}

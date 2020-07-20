@@ -10,7 +10,7 @@ Create database in MongoDB called 'aegro'.
 Import the code in IDE (IntelliJ IDEA https://spring.io/guides/gs/intellij-idea/).
 Start spring boot:
 ```
-mvnw spring-boot:run
+./mvnw spring-boot:run
 ```
 
 ### Run frontend

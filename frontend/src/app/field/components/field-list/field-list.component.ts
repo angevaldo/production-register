@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
-import { FieldService, Field, Farm } from '../../../shared';
+import { FarmService, FieldService, Field, Farm } from '../../../shared';
+import { SharedService } from '../../services';
 
 @Component({
   selector: 'app-field-list',
@@ -16,30 +17,40 @@ export class FieldListComponent implements OnInit {
 
   dataSource: MatTableDataSource<Field>;
   columns: string[] = ['actions', 'name', 'area', 'id'];
-  farms: Farm[] = [
-    { id: '5f14f2aa1b6eb7748b946ea9', name: 'Farm 01' },
-    { id: '5f15144167ac8b06195e51d0', name: 'steest' }
-  ];
-  farmId: string;
-  farmName: string;
+  farms: Farm[];
+  farmCurrent: Farm;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   constructor(
     private fieldService: FieldService,
+    private farmService: FarmService,
+    private sharedService: SharedService,
     private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.findByFarmId("5f14f2aa1b6eb7748b946ea9");
+    this.findAllFarms();
+
+    this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
+    if (this.farmCurrent && this.farmCurrent.id) {
+      this.findByFarmId(this.farmCurrent.id);
+    }
+  }
+
+  findAllFarms() {
+    this.farmService.findAll()
+      .subscribe(
+        data => { this.farms = data as Farm[]; },
+        err => { this.snackBar.open(err.error.message, "Error"); }
+      );
   }
 
   findByFarmId(farmId: string) {
     this.fieldService.findByFarmId(farmId)
       .subscribe(
         data => {
-          this.farmId = farmId;
-          this.farmName = this.farms.find(s => s.id == farmId).name;
+          this.changeFarmCurrent(farmId);
           
           const fields = data as Field[];
           this.dataSource = new MatTableDataSource<Field>(fields);
@@ -52,13 +63,20 @@ export class FieldListComponent implements OnInit {
       );
   }
 
+  changeFarmCurrent(farmId: string) {
+    const farm: Farm = this.farms.find(s => s.id == farmId);
+    this.farmCurrent.id = farm.id;
+    this.farmCurrent.name = farm.name;
+    this.sharedService.nextFarm(this.farmCurrent);
+  }
+
   deleteById(fieldId: string) {
     this.fieldService.deleteById(fieldId)
       .subscribe(
         data => {
           const msg: string = "Field deleted with success!";
           this.snackBar.open(msg, "Success");
-          this.findByFarmId(this.farmId);
+          this.findByFarmId(this.farmCurrent.id);
         },
         err => {
           this.snackBar.open(err.error.message, "Error");

@@ -3,7 +3,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Field, FieldService } from '../../../shared';
+import { Field, FieldService, Farm } from '../../../shared';
+import { SharedService } from '../../services';
 
 @Component({
   selector: 'app-field-update',
@@ -12,15 +13,17 @@ import { Field, FieldService } from '../../../shared';
 })
 export class FieldUpdateComponent implements OnInit {
 
-  fieldId: string;
   form: FormGroup;
+  fieldId: string;
+  farmCurrent: Farm;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private router: Router,
-    private fieldService: FieldService
+    private fieldService: FieldService,
+    private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
@@ -30,6 +33,7 @@ export class FieldUpdateComponent implements OnInit {
       area: ['', [Validators.required]]
     });
 
+    this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
     this.findById(this.fieldId);
   }
 
@@ -38,6 +42,7 @@ export class FieldUpdateComponent implements OnInit {
       .subscribe(
         data => {
           this.form.get('name').setValue(data.name);
+          this.form.get('area').setValue(data.area);
         },
         err => {
           this.snackBar.open(err.error.message, "Error");
@@ -48,6 +53,7 @@ export class FieldUpdateComponent implements OnInit {
   update() {
     if (this.form.invalid) return;
 
+    console.log(this.farmCurrent.id)
     const field: Field = this.form.value;
 
     this.fieldService.update(this.get(field))
@@ -63,10 +69,25 @@ export class FieldUpdateComponent implements OnInit {
       );
   }
 
+  deleteById() {
+    this.fieldService.deleteById(this.fieldId)
+      .subscribe(
+        data => {
+          const msg: string = "Field deleted with success!";
+          this.snackBar.open(msg, "Success");
+          this.router.navigate(['/fields']);
+        },
+        err => {
+          this.snackBar.open(err.error.message, "Error");
+        }
+      );
+  }
+
   get(data: any): Field {
     return new Field(
       data.name,
       data.area,
+      this.farmCurrent.id,
       this.fieldId
     );
   }
