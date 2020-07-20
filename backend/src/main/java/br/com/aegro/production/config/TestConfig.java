@@ -43,7 +43,7 @@ public class TestConfig implements CommandLineRunner {
                 fieldRepository.insert(field);
                 farmRepository.save(farm);
 
-                int nProductions = (new Random().nextInt(21) + 10); // 10 to 30 Productions per Field
+                int nProductions = Igua(new Random().nextInt(21) + 10); // 10 to 30 Productions per Field
                 for (int n=0; n < nProductions; n++) {
                     double value = new Random().nextDouble() * 100d + 10d;
                     Production production = new Production(null, value, farm, field);
