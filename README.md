@@ -1,26 +1,28 @@
 # Production Register
 
-## Run frontend
+## Run project 
 
-- Download dependencies:
+### Run frontend
+
+Download dependencies:
 ```
 npm install
 ```
 
-- Start angular:
+Start angular:
 ```
 npm start
 ```
 
-## Run backend
+### Run backend
 
-- Import the code in IDE (IntelliJ IDEA https://spring.io/guides/gs/intellij-idea/)
-- Start spring boot:
+Import the code in IDE (IntelliJ IDEA https://spring.io/guides/gs/intellij-idea/).
+Start spring boot:
 ```
 mvnw spring-boot:run
 ```
 
-## Run test coverage
+### Run test coverage
 ```
 mvn clean test
 ```
