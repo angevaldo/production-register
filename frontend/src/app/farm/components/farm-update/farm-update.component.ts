@@ -78,7 +78,7 @@ export class FarmUpdateComponent implements OnInit {
   getProductivity() {
     this.productionService.productivityByFarmId(this.farmId)
       .subscribe(
-        data => { this.snackBar.open(Number(data).toLocaleString('en'), "Productivity"); },
+        data => { this.snackBar.open(Number(data).toLocaleString('en', {maximumFractionDigits:2}), "Productivity"); },
         err => { this.snackBar.open(err.error.message, "Error"); }
       );
   }

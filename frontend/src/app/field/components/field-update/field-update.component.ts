@@ -85,7 +85,7 @@ export class FieldUpdateComponent implements OnInit {
   getProductivity() {
     this.productionService.productivityByFieldId(this.fieldId)
       .subscribe(
-        data => { this.snackBar.open(Number(data).toLocaleString('en'), "Productivity"); },
+        data => { this.snackBar.open(Number(data).toLocaleString('en', {maximumFractionDigits:2}), "Productivity"); },
         err => { this.snackBar.open(err.error.message, "Error"); }
       );
   }

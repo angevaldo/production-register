@@ -10,22 +10,24 @@
                 <input matInput placeholder="Name" formControlName="name">
             </mat-form-field>
         </mat-list-item>
+
+        <br>
+
         <mat-list-item>
-            <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="update()">
-                <mat-icon svgIcon="check"></mat-icon> Save
-            </button>
-            &nbsp;
-            <button mat-raised-button color="warn" (click)="deleteById()">
-                <mat-icon svgIcon="trash-can-outline"></mat-icon> Delete
-            </button>
-            &nbsp;
-            <button mat-raised-button color="accent" (click)="getProductivity()">
-                <mat-icon svgIcon="sprout-outline"></mat-icon> Productivity
-            </button>
-            &nbsp;
-            <button mat-stroked-button routerLink="/farms">
-                <mat-icon svgIcon="table-large"></mat-icon> Go to list
-            </button>
+            <mat-action-list>
+                <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="update()">
+                    <mat-icon svgIcon="check"></mat-icon> Save
+                </button>
+                <button mat-raised-button color="warn" (click)="deleteById()">
+                    <mat-icon svgIcon="trash-can-outline"></mat-icon> Delete
+                </button>
+                <button mat-raised-button color="accent" (click)="getProductivity()">
+                    <mat-icon svgIcon="sprout-outline"></mat-icon> Productivity
+                </button>
+                <button mat-stroked-button routerLink="/farms"> Go to Farm list
+                    List
+                </button>
+            </mat-action-list>
         </mat-list-item>
     </mat-list>
 </form>

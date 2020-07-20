@@ -2,3 +2,27 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+a {
+    color: #00b147;
+}
+a:visited {
+    color: #00982f;
+}
+a:hover {
+    color: #235225;
+}
+
+.page-wrapper button {
+    margin: 2px !important;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+mat-cell > span.ellipsis {
+    text-overflow: ellipsis; 
+    overflow: hidden; 
+    white-space: nowrap;
+ }
