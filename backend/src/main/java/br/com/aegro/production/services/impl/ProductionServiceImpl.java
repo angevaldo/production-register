@@ -22,7 +22,7 @@ public class ProductionServiceImpl implements br.com.aegro.production.services.P
     FieldService fieldService;
 
     private void updateDataFromTo(Production productionFrom, Production productionTo) {
-        productionFrom.setValue(productionTo.getValue());
+        productionTo.setValue(productionFrom.getValue());
     }
 
     private double calculateProductivity(List<Production> productions) {

@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Farm, FarmService } from '../../../shared';
+import { Farm, FarmService, ProductionService } from '../../../shared';
 
 @Component({
   selector: 'app-farm-update',
@@ -20,7 +20,8 @@ export class FarmUpdateComponent implements OnInit {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private router: Router,
-    private farmService: FarmService
+    private farmService: FarmService,
+    private productionService: ProductionService
   ) { }
 
   ngOnInit(): void {
@@ -57,6 +58,28 @@ export class FarmUpdateComponent implements OnInit {
         err => {
           this.snackBar.open(err.error.message, "Error");
         }
+      );
+  }
+
+  deleteById() {
+    this.farmService.deleteById(this.farmId)
+      .subscribe(
+        data => {
+          const msg: string = "Farm deleted with success!";
+          this.snackBar.open(msg, "Success");
+          this.router.navigate(['/farms']);
+        },
+        err => {
+          this.snackBar.open(err.error.message, "Error");
+        }
+      );
+  }
+
+  getProductivity() {
+    this.productionService.productivityByFarmId(this.farmId)
+      .subscribe(
+        data => { this.snackBar.open(Number(data).toLocaleString('en'), "Productivity"); },
+        err => { this.snackBar.open(err.error.message, "Error"); }
       );
   }
 

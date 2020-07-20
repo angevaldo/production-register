@@ -3,8 +3,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Field, FieldService, Farm } from '../../../shared';
+import { Field, FieldService, Farm, ProductionService } from '../../../shared';
 import { SharedService } from '../../services';
+import { formatNumber } from '@angular/common';
 
 @Component({
   selector: 'app-field-update',
@@ -23,6 +24,7 @@ export class FieldUpdateComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private fieldService: FieldService,
+    private productionService: ProductionService,
     private sharedService: SharedService
   ) { }
 
@@ -64,7 +66,7 @@ export class FieldUpdateComponent implements OnInit {
           this.snackBar.open(err.error.message, "Error");
         }
       );
-  }
+  }  
 
   deleteById() {
     this.fieldService.deleteById(this.fieldId)
@@ -77,6 +79,14 @@ export class FieldUpdateComponent implements OnInit {
         err => {
           this.snackBar.open(err.error.message, "Error");
         }
+      );
+  }
+  
+  getProductivity() {
+    this.productionService.productivityByFieldId(this.fieldId)
+      .subscribe(
+        data => { this.snackBar.open(Number(data).toLocaleString('en'), "Productivity"); },
+        err => { this.snackBar.open(err.error.message, "Error"); }
       );
   }
 
