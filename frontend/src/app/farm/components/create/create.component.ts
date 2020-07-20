@@ -27,22 +27,20 @@ export class CreateComponent implements OnInit {
   	});
   }
 
-  create() {
-  	if (this.form.invalid) {
-      return;
-    }
+  insert() {
+  	if (this.form.invalid) return;
 
     const farm: Farm = this.form.value;
 
-    this.farmService.create(farm)
+    this.farmService.insert(farm)
       .subscribe(
         data => {
-          const msg: string = 'Farm created with success!';
+          const msg: string = 'Farm inserted with success!';
           this.snackBar.open(msg, "Success");
           this.router.navigate(['/farms']);
         },
         err => {
-          let msg: string = 'Try again in minutes.';
+          let msg: string = 'Try again later.';
           if (err.status == 400) {
             msg = err.error.errors.join(' ');
           }

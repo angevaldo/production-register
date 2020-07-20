@@ -19,12 +19,14 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 import { CreateComponent, ListComponent, FarmComponent } from './components';
 
 import { FarmService } from '../shared';
+import { UpdateComponent } from './components/update/update.component';
 
 @NgModule({
   declarations: [
     CreateComponent, 
     ListComponent,
-    FarmComponent
+    FarmComponent,
+    UpdateComponent
   ],
   imports: [
     CommonModule,

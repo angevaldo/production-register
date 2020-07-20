@@ -4,7 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { 
 	FarmComponent,
 	CreateComponent, 
-	ListComponent 
+	ListComponent ,
+	UpdateComponent,
 } from './components';
 
 export const FarmRoutes: Routes = [
@@ -17,8 +18,12 @@ export const FarmRoutes: Routes = [
 			component: ListComponent 
 		  },
 		  {
-			path: 'create', 
+			path: 'new', 
 			component: CreateComponent 
+		  },
+		  {
+			path: ':farmId', 
+			component: UpdateComponent 
 		  }
 		]
 	}

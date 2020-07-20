@@ -1,4 +1,40 @@
 <mat-toolbar color="primary">
-  <span>Production Register</span>
+  <mat-toolbar-row>
+
+    <button mat-icon-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="menuFarm">
+        <mat-icon svgIcon="barn"></mat-icon> Farm
+      </button>
+      <button mat-menu-item [matMenuTriggerFor]="menuField">
+        <mat-icon svgIcon="focus-field"></mat-icon> Field
+      </button>
+      <button mat-menu-item [matMenuTriggerFor]="menuProduction">
+        <mat-icon svgIcon="sprout"></mat-icon> Production
+      </button>
+    </mat-menu>
+
+    <mat-menu #menuFarm="matMenu">
+      <button mat-menu-item routerLink="farms/new">New Farm</button>
+      <button mat-menu-item routerLink="farms">List All Farms</button>
+    </mat-menu>
+    <mat-menu #menuField="matMenu">
+      <button mat-menu-item>New Field</button>
+      <button mat-menu-item>List Fields</button>
+    </mat-menu>
+    <mat-menu #menuProduction="matMenu">
+      <button mat-menu-item>Register Production</button>
+      <button mat-menu-item>List Productions</button>
+    </mat-menu>
+
+    &nbsp;
+    <span>Production Register</span>
+
+  </mat-toolbar-row>
 </mat-toolbar>
-<router-outlet></router-outlet>
+
+<div class="page-wrapper">
+  <router-outlet></router-outlet>
+</div>
