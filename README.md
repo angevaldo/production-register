@@ -12,6 +12,7 @@ Start spring boot:
 ```
 ./mvnw spring-boot:run
 ```
+Api docs: http://localhost:8080/swagger-ui.html
 
 ### Run frontend
 
