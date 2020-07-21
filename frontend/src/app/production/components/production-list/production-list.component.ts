@@ -32,6 +32,22 @@ export class ProductionListComponent implements OnInit {
     private sharedService: SharedService,
     private snackBar: MatSnackBar) { }
 
+  private findData() {
+    if (this.fieldCurrent.id) {
+      this.findByFieldId(this.fieldCurrent.id);
+    } else if (this.farmCurrent.id) {
+      this.findByFarmId(this.farmCurrent.id);
+    } else {
+      this.updateDataTable(<Production[]>[]);
+    }
+  }
+
+  private updateDataTable(productions: Production[]) {
+    this.dataSource = new MatTableDataSource<Production>(productions);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
   ngOnInit(): void {
     this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
     this.sharedService.sharedField.subscribe(fieldCurrent => this.fieldCurrent = fieldCurrent);
@@ -41,7 +57,7 @@ export class ProductionListComponent implements OnInit {
       this.findFieldsByFarmId(this.farmCurrent.id);
     }
 
-    this.updateDataTable();
+    this.findData();
   }
 
   findAllFarms() {
@@ -65,15 +81,11 @@ export class ProductionListComponent implements OnInit {
       .subscribe(
         data => {
           this.changeFarmCurrent(farmId);
-
-          const productions = data as Production[];
-          this.dataSource = new MatTableDataSource<Production>(productions);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
+          this.updateDataTable(data as Production[]);
         },
         err => {
           if (err.error.status == "404") {
-            this.dataSource = new MatTableDataSource<Production>(<Production[]>[]);
+            this.updateDataTable(<Production[]>[]);
           }
           this.snackBar.open(err.error.message, "Error");
         }
@@ -85,15 +97,11 @@ export class ProductionListComponent implements OnInit {
       .subscribe(
         data => {
           this.changeFieldCurrent(fieldId);
-
-          const productions = data as Production[];
-          this.dataSource = new MatTableDataSource<Production>(productions);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
+          this.updateDataTable(data as Production[]);
         },
         err => {
           if (err.error.status == "404") {
-            this.dataSource = new MatTableDataSource<Production>(<Production[]>[]);
+            this.updateDataTable(<Production[]>[]);
           }
           this.snackBar.open(err.error.message, "Error");
         }
@@ -101,6 +109,8 @@ export class ProductionListComponent implements OnInit {
   }
 
   changeFarmCurrent(farmId: string) {
+    if (farmId == null || this.farms == null) return;
+
     const farm: Farm = this.farms.find(s => s.id == farmId);
     this.farmCurrent.id = farm.id;
     this.farmCurrent.name = farm.name;
@@ -124,22 +134,13 @@ export class ProductionListComponent implements OnInit {
     this.productionService.deleteById(productionId)
       .subscribe(
         data => {
-          const msg: string = "Production deleted with success!";
-          this.snackBar.open(msg, "Success");
-          this.updateDataTable();
+          this.snackBar.open("Production deleted with success!", "Success");
+          this.findData();
         },
         err => {
           this.snackBar.open(err.error.message, "Error");
         }
       );
-  }
-
-  updateDataTable() {
-    if (this.fieldCurrent.id) {
-      this.findByFieldId(this.fieldCurrent.id);
-    } else if (this.farmCurrent.id) {
-      this.findByFarmId(this.farmCurrent.id);
-    }
   }
 
 }

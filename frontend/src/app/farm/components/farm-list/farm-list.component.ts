@@ -23,6 +23,12 @@ export class FarmListComponent implements OnInit {
     private farmService: FarmService,
     private snackBar: MatSnackBar) { }
 
+  private updateDataTable(farms: Farm[]) {
+    this.dataSource = new MatTableDataSource<Farm>(farms);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
   ngOnInit(): void {
     this.findAll();
   }
@@ -31,14 +37,11 @@ export class FarmListComponent implements OnInit {
     this.farmService.findAll()
       .subscribe(
         data => {
-          const farms = data as Farm[];
-          this.dataSource = new MatTableDataSource<Farm>(farms);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
+          this.updateDataTable(data as Farm[]);
         },
         err => {
           if (err.error.status == "404") {
-            this.dataSource = new MatTableDataSource<Farm>(<Farm[]>[]);
+            this.updateDataTable(<Farm[]>[]);
           }
           this.snackBar.open(err.error.message, "Error");
         }
@@ -49,8 +52,7 @@ export class FarmListComponent implements OnInit {
     this.farmService.deleteById(farmId)
       .subscribe(
         data => {
-          const msg: string = "Farm deleted with success!";
-          this.snackBar.open(msg, "Success");
+          this.snackBar.open("Farm deleted with success!", "Success");
           this.findAll();
         },
         err => {
