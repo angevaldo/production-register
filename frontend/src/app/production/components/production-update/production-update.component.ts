@@ -3,8 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Production, ProductionService, Farm } from '../../../shared';
-import { SharedService } from '../../services';
+import { Production, ProductionService } from '../../../shared';
 
 @Component({
   selector: 'app-production-update',
@@ -14,8 +13,7 @@ import { SharedService } from '../../services';
 export class ProductionUpdateComponent implements OnInit {
 
   form: FormGroup;
-  productionId: string;
-  farmCurrent: Farm;
+  production: Production = new Production(null, null);
 
   constructor(
     private fb: FormBuilder,
@@ -23,23 +21,23 @@ export class ProductionUpdateComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private productionService: ProductionService,
-    private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
-    this.productionId = this.route.snapshot.paramMap.get('productionId');
+    this.findById();
+    
     this.form = this.fb.group({
       value: ['', [Validators.required]]
     });
-
-    this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
-    this.findById(this.productionId);
   }
 
-  findById(id: string) {
-    this.productionService.findById(id)
+  findById() {
+    this.productionService.findById(this.route.snapshot.paramMap.get('productionId'))
       .subscribe(
         data => {
+          this.production.value = data.value;
+          this.production.fieldId = data.fieldId;
+          this.production.id = data.id;
           this.form.get('value').setValue(data.value);
         },
         err => {
@@ -54,8 +52,7 @@ export class ProductionUpdateComponent implements OnInit {
     this.productionService.update(this.getObjectFromForm(this.form.value))
       .subscribe(
         data => {
-          const msg: string = 'Production updated with success!';
-          this.snackBar.open(msg, "Success");
+          this.snackBar.open('Production updated with success!', 'Success');
           this.router.navigate(['/productions']);
         },
         err => {
@@ -65,11 +62,10 @@ export class ProductionUpdateComponent implements OnInit {
   }
 
   deleteById() {
-    this.productionService.deleteById(this.productionId)
+    this.productionService.deleteById(this.production.id)
       .subscribe(
         data => {
-          const msg: string = "Production deleted with success!";
-          this.snackBar.open(msg, "Success");
+          this.snackBar.open('Production deleted with success!', 'Success');
           this.router.navigate(['/productions']);
         },
         err => {
@@ -81,8 +77,8 @@ export class ProductionUpdateComponent implements OnInit {
   getObjectFromForm(data: any): Production {
     return new Production(
       data.value,
-      this.farmCurrent.id,
-      this.productionId
+      this.production.fieldId,
+      this.production.id
     );
   }
 

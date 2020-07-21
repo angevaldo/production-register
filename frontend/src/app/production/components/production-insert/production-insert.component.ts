@@ -29,40 +29,7 @@ export class ProductionInsertComponent implements OnInit {
     private sharedService: SharedService
   ) { }
 
-  ngOnInit(): void {
-    this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
-    this.sharedService.sharedField.subscribe(fieldCurrent => this.fieldCurrent = fieldCurrent);
-
-    this.findAllFarms();
-    this.updateDataTable();
-
-    this.form = this.fb.group({
-      value: ['', [Validators.required]],
-      farmId: [this.farmCurrent.id],
-      fieldId: [this.fieldCurrent.id, [Validators.required]]
-    });
-  }
-
-  changeFarmCurrent(farmId: string) {
-    const farm: Farm = this.farms.find(s => s.id == farmId);
-    this.farmCurrent.id = farm.id;
-    this.farmCurrent.name = farm.name;
-    this.sharedService.nextFarm(this.farmCurrent);
-
-    this.fieldCurrent = new Field('?', null, farmId);
-    this.sharedService.nextField(this.fieldCurrent);
-    this.findFieldsByFarmId(farmId);
-  }
-
-  changeFieldCurrent(fieldId: string) {
-    const field: Field = this.fields.find(s => s.id == fieldId);
-    this.fieldCurrent.id = field.id;
-    this.fieldCurrent.name = field.name;
-    this.fieldCurrent.area = field.area;
-    this.sharedService.nextField(this.fieldCurrent);
-  }
-
-  findAllFarms() {
+  private populateSelectFarms() {
     this.farmService.findAll()
       .subscribe(
         data => { this.farms = data as Farm[]; },
@@ -70,31 +37,17 @@ export class ProductionInsertComponent implements OnInit {
       );
   }
 
-  findFieldsByFarmId(farmId: string) {
-    this.fieldService.findByFarmId(farmId)
-      .subscribe(
-        data => { this.fields = data as Field[]; },
-        err => { this.snackBar.open(err.error.message, "Error"); }
-      );
+  private populateSelectFields() {
+    if (this.farmCurrent.id) {
+      this.fieldService.findByFarmId(this.farmCurrent.id)
+        .subscribe(
+          data => { this.fields = data as Field[]; },
+          err => { this.snackBar.open(err.error.message, "Error"); }
+        );
+    }
   }
 
-  insert() {
-    if (this.form.invalid) return;
-    
-    this.productionService.insert(this.getObjectFromForm(this.form.value))
-      .subscribe(
-        data => {
-          const msg: string = 'Production inserted with success!';
-          this.snackBar.open(msg, "Success");
-          this.router.navigate(['/productions']);
-        },
-        err => {
-          this.snackBar.open(err.error.message, "Error");
-        }
-      );
-  }
-
-  getObjectFromForm(data: any): Production {
+  private getObject(data: any): Production {
     return new Production(
       data.value,
       data.fieldId,
@@ -102,10 +55,54 @@ export class ProductionInsertComponent implements OnInit {
     );
   }
 
-  updateDataTable() {
-    if (this.farmCurrent.id) {
-      this.findFieldsByFarmId(this.farmCurrent.id);
-    }
+  ngOnInit(): void {
+    this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
+    this.sharedService.sharedField.subscribe(fieldCurrent => this.fieldCurrent = fieldCurrent);
+
+    this.populateSelectFarms();
+    this.populateSelectFields();
+
+    this.form = this.fb.group({
+      value: ['', [Validators.required]],
+      farmId: [this.farmCurrent.id, [Validators.required]],
+      fieldId: [this.fieldCurrent.id, [Validators.required]]
+    });
+  }
+
+  onChangeFarmCurrent(farmId: string) {
+    const farm: Farm = this.farms.find(s => s.id == farmId);
+    this.farmCurrent.id = farm.id;
+    this.farmCurrent.name = farm.name;
+    this.sharedService.nextFarm(this.farmCurrent);
+
+    this.fieldCurrent = new Field('?', null, farmId);
+    this.sharedService.nextField(this.fieldCurrent);
+
+    this.populateSelectFields();
+  }
+
+  onChangeFieldCurrent(fieldId: string) {
+    if (fieldId == null || this.fields == null) return;
+
+    const field: Field = this.fields.find(s => s.id == fieldId);
+    this.fieldCurrent.id = field.id;
+    this.fieldCurrent.name = field.name;
+    this.sharedService.nextField(this.fieldCurrent);
+  }
+
+  insert() {
+    if (this.form.invalid) return;
+    
+    this.productionService.insert(this.getObject(this.form.value))
+      .subscribe(
+        data => {
+          this.snackBar.open('Production inserted with success!', "Success");
+          this.router.navigate(['/productions']);
+        },
+        err => {
+          this.snackBar.open(err.error.message, "Error");
+        }
+      );
   }
 
 }
