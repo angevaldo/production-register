@@ -3,7 +3,7 @@
 <form [formGroup]="form" novalidate>
     <mat-list>
         <mat-list-item>
-            ID: {{ farmId }}
+            <span class="text-muted">ID: {{ farmId }}</span>
         </mat-list-item>
         <mat-list-item>
             <mat-form-field>
@@ -21,11 +21,13 @@
                 <button mat-raised-button color="warn" (click)="deleteById()">
                     <mat-icon svgIcon="trash-can-outline"></mat-icon> Delete
                 </button>
+                &nbsp;
                 <button mat-raised-button color="accent" (click)="getProductivity()">
                     <mat-icon svgIcon="sprout-outline"></mat-icon> Productivity
                 </button>
-                <button mat-stroked-button routerLink="/farms"> Go to Farm list
-                    List
+                &nbsp;
+                <button mat-stroked-button routerLink="/farms">
+                    <mat-icon svgIcon="table-large"></mat-icon> Go to list
                 </button>
             </mat-action-list>
         </mat-list-item>

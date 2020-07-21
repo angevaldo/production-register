@@ -5,7 +5,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Field, FieldService, Farm, ProductionService } from '../../../shared';
 import { SharedService } from '../../services';
-import { formatNumber } from '@angular/common';
 
 @Component({
   selector: 'app-field-update',

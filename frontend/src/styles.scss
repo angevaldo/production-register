@@ -13,6 +13,12 @@ a:hover {
     color: #235225;
 }
 
+mat-cell > span.ellipsis {
+    text-overflow: ellipsis; 
+    overflow: hidden; 
+    white-space: nowrap;
+}
+
 .page-wrapper button {
     margin: 2px !important;
 }
@@ -21,8 +27,6 @@ a:hover {
     flex: 1 1 auto;
 }
 
-mat-cell > span.ellipsis {
-    text-overflow: ellipsis; 
-    overflow: hidden; 
-    white-space: nowrap;
- }
+.text-muted {
+    color: #aaaaaa;
+}
