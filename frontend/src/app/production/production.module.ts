@@ -14,7 +14,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 
@@ -45,7 +44,6 @@ import { ProductionService } from '../shared';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatCardModule,
     MatSelectModule
   ],
   providers: [

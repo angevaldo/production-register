@@ -13,7 +13,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 
 import { FarmInsertComponent, FarmListComponent, FarmUpdateComponent, FarmWrapperComponent } from './components';
@@ -40,8 +39,7 @@ import { FarmService } from '../shared';
     MatSnackBarModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule,
-    MatCardModule
+    MatSortModule
   ],
   providers: [
     FarmService,
