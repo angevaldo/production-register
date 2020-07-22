@@ -24,23 +24,31 @@ export class FarmUpdateComponent implements OnInit {
     private productionService: ProductionService
   ) { }
 
+  private getObject(data: any): Farm {
+    return new Farm(
+      data.name,
+      this.farmId
+    );
+  }
+
   ngOnInit(): void {
     this.farmId = this.route.snapshot.paramMap.get('farmId');
+
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]]
     });
 
-    this.findById(this.farmId);
+    this.findById();
   }
 
-  findById(id: string) {
-    this.farmService.findById(id)
+  findById() {
+    this.farmService.findById(this.farmId)
       .subscribe(
         data => {
           this.form.get('name').setValue(data.name);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }
@@ -48,15 +56,14 @@ export class FarmUpdateComponent implements OnInit {
   update() {
     if (this.form.invalid) return;
 
-    this.farmService.update(this.getObjectFromForm(this.form.value))
+    this.farmService.update(this.getObject(this.form.value))
       .subscribe(
         data => {
-          const msg: string = 'Farm updated with success!';
-          this.snackBar.open(msg, "Success");
+          this.snackBar.open('Farm updated with success!', 'Success');
           this.router.navigate(['/farms']);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }
@@ -65,12 +72,11 @@ export class FarmUpdateComponent implements OnInit {
     this.farmService.deleteById(this.farmId)
       .subscribe(
         data => {
-          const msg: string = "Farm deleted with success!";
-          this.snackBar.open(msg, "Success");
+          this.snackBar.open('Farm deleted with success!', 'Success');
           this.router.navigate(['/farms']);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }
@@ -78,16 +84,9 @@ export class FarmUpdateComponent implements OnInit {
   getProductivity() {
     this.productionService.productivityByFarmId(this.farmId)
       .subscribe(
-        data => { this.snackBar.open(Number(data).toLocaleString('en', {maximumFractionDigits:2}), "Productivity"); },
-        err => { this.snackBar.open(err.error.message, "Error"); }
+        data => { this.snackBar.open(Number(data).toLocaleString('en', {maximumFractionDigits:2}), 'Productivity'); },
+        err => { this.snackBar.open(err.error.message, 'Error'); }
       );
-  }
-
-  getObjectFromForm(data: any): Farm {
-    return new Farm(
-      data.name,
-      this.farmId
-    );
   }
 
 }

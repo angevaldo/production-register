@@ -34,11 +34,11 @@ export class FarmInsertComponent implements OnInit {
       .subscribe(
         data => {
           const msg: string = 'Farm inserted with success!';
-          this.snackBar.open(msg, "Success");
+          this.snackBar.open(msg, 'Success');
           this.router.navigate(['/farms']);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }

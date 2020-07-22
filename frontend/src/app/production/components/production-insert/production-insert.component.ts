@@ -33,7 +33,7 @@ export class ProductionInsertComponent implements OnInit {
     this.farmService.findAll()
       .subscribe(
         data => { this.farms = data as Farm[]; },
-        err => { this.snackBar.open(err.error.message, "Error"); }
+        err => { this.snackBar.open(err.error.message, 'Error'); }
       );
   }
 
@@ -42,7 +42,7 @@ export class ProductionInsertComponent implements OnInit {
       this.fieldService.findByFarmId(this.farmCurrent.id)
         .subscribe(
           data => { this.fields = data as Field[]; },
-          err => { this.snackBar.open(err.error.message, "Error"); }
+          err => { this.snackBar.open(err.error.message, 'Error'); }
         );
     }
   }
@@ -96,11 +96,11 @@ export class ProductionInsertComponent implements OnInit {
     this.productionService.insert(this.getObject(this.form.value))
       .subscribe(
         data => {
-          this.snackBar.open('Production inserted with success!', "Success");
+          this.snackBar.open('Production inserted with success!', 'Success');
           this.router.navigate(['/productions']);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }

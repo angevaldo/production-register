@@ -80,7 +80,7 @@ export class FieldUpdateComponent implements OnInit {
     this.fieldService.deleteById(this.fieldId)
       .subscribe(
         data => {
-          this.snackBar.open('Field deleted with success!', "Success");
+          this.snackBar.open('Field deleted with success!', 'Success');
           this.router.navigate(['/fields']);
         },
         err => {

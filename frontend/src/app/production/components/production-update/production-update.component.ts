@@ -77,7 +77,7 @@ export class ProductionUpdateComponent implements OnInit {
           this.router.navigate(['/productions']);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }

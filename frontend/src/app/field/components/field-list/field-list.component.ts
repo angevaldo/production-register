@@ -32,7 +32,7 @@ export class FieldListComponent implements OnInit {
     this.farmService.findAll()
       .subscribe(
         data => { this.farms = data as Farm[]; },
-        err => { this.snackBar.open(err.error.message, "Error"); }
+        err => { this.snackBar.open(err.error.message, 'Error'); }
       );
   }
 
@@ -75,10 +75,10 @@ export class FieldListComponent implements OnInit {
           this.fillTableData(data as Field[]);
         },
         err => {
-          if (err.error.status == "404") {
+          if (err.error.status == '404') {
             this.fillTableData(<Field[]>[]);
           }
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }
@@ -87,11 +87,11 @@ export class FieldListComponent implements OnInit {
     this.fieldService.deleteById(fieldId)
       .subscribe(
         data => {
-          this.snackBar.open("Field deleted with success!", "Success");
+          this.snackBar.open('Field deleted with success!', 'Success');
           this.populateTableData();
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }

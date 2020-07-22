@@ -23,7 +23,7 @@ export class FarmListComponent implements OnInit {
     private farmService: FarmService,
     private snackBar: MatSnackBar) { }
 
-  private updateDataTable(farms: Farm[]) {
+  private updateTableData(farms: Farm[]) {
     this.dataSource = new MatTableDataSource<Farm>(farms);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -37,13 +37,13 @@ export class FarmListComponent implements OnInit {
     this.farmService.findAll()
       .subscribe(
         data => {
-          this.updateDataTable(data as Farm[]);
+          this.updateTableData(data as Farm[]);
         },
         err => {
-          if (err.error.status == "404") {
-            this.updateDataTable(<Farm[]>[]);
+          if (err.error.status == '404') {
+            this.updateTableData(<Farm[]>[]);
           }
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }
@@ -52,11 +52,11 @@ export class FarmListComponent implements OnInit {
     this.farmService.deleteById(farmId)
       .subscribe(
         data => {
-          this.snackBar.open("Farm deleted with success!", "Success");
+          this.snackBar.open('Farm deleted with success!', 'Success');
           this.findAll();
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }
