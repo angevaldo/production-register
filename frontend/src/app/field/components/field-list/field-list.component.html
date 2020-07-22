@@ -2,7 +2,7 @@
 
 <mat-form-field>
     <mat-label>Select a Farm</mat-label>
-    <mat-select [(ngModel)]="farmCurrent.id" name="farmSelect" #farmSelect (ngModelChange)="findByFarmId(farmSelect.value)">
+    <mat-select [(ngModel)]="farmCurrent.id" name="farmSelect" #farmSelect (ngModelChange)="onChangeFarmCurrent(farmSelect.value)">
         <mat-option *ngFor="let farm of farms" [value]="farm.id">
             {{ farm.name }}
         </mat-option>

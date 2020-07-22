@@ -28,22 +28,7 @@ export class FieldListComponent implements OnInit {
     private sharedService: SharedService,
     private snackBar: MatSnackBar) { }
 
-  private updateDataTable(fields: Field[]) {
-    this.dataSource = new MatTableDataSource<Field>(fields);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-  }
-
-  ngOnInit(): void {
-    this.findAllFarms();
-
-    this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
-    if (this.farmCurrent && this.farmCurrent.id) {
-      this.findByFarmId(this.farmCurrent.id);
-    }
-  }
-
-  findAllFarms() {
+  private populateSelectFarms() {
     this.farmService.findAll()
       .subscribe(
         data => { this.farms = data as Farm[]; },
@@ -51,29 +36,51 @@ export class FieldListComponent implements OnInit {
       );
   }
 
-  findByFarmId(farmId: string) {
-    this.fieldService.findByFarmId(farmId)
-      .subscribe(
-        data => {
-          this.changeFarmCurrent(farmId);
-          this.updateDataTable(data as Field[]);
-        },
-        err => {
-          if (err.error.status == "404") {
-            this.updateDataTable(<Field[]>[]);
-          }
-          this.snackBar.open(err.error.message, "Error");
-        }
-      );
+  private populateTableData() {
+    if (this.farmCurrent.id) {
+      this.findByFarmId();
+    } else {
+      this.fillTableData(<Field[]>[]);
+    }
   }
 
-  changeFarmCurrent(farmId: string) {
+  private fillTableData(fields: Field[]) {
+    this.dataSource = new MatTableDataSource<Field>(fields);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnInit(): void {
+    this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
+
+    this.populateSelectFarms();
+    this.populateTableData();
+  }
+
+  onChangeFarmCurrent(farmId: string) {
     if (farmId == null || this.farms == null) return;
 
     const farm: Farm = this.farms.find(s => s.id == farmId);
     this.farmCurrent.id = farm.id;
     this.farmCurrent.name = farm.name;
     this.sharedService.nextFarm(this.farmCurrent);
+
+    this.findByFarmId();
+  }
+
+  findByFarmId() {
+    this.fieldService.findByFarmId(this.farmCurrent.id)
+      .subscribe(
+        data => {
+          this.fillTableData(data as Field[]);
+        },
+        err => {
+          if (err.error.status == "404") {
+            this.fillTableData(<Field[]>[]);
+          }
+          this.snackBar.open(err.error.message, "Error");
+        }
+      );
   }
 
   deleteById(fieldId: string) {
@@ -81,7 +88,7 @@ export class FieldListComponent implements OnInit {
       .subscribe(
         data => {
           this.snackBar.open("Field deleted with success!", "Success");
-          this.findByFarmId(this.farmCurrent.id);
+          this.populateTableData();
         },
         err => {
           this.snackBar.open(err.error.message, "Error");

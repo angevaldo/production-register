@@ -85,10 +85,11 @@ export class ProductionListComponent implements OnInit {
 
     this.fieldCurrent = new Field('?', null, farmId);
     this.sharedService.nextField(this.fieldCurrent);
+
     this.populateSelecFields();
 
     this.findByFarmId();
-  }
+  } 
 
   onChangeFieldCurrent(fieldId: string) {
     if (fieldId == null || this.fields == null) return;

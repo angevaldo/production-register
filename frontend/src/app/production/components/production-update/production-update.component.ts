@@ -23,6 +23,14 @@ export class ProductionUpdateComponent implements OnInit {
     private productionService: ProductionService,
   ) { }
 
+  private getObject(data: any): Production {
+    return new Production(
+      data.value,
+      this.production.fieldId,
+      this.production.id
+    );
+  }
+
   ngOnInit(): void {
     this.findById();
     
@@ -41,7 +49,7 @@ export class ProductionUpdateComponent implements OnInit {
           this.form.get('value').setValue(data.value);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }
@@ -49,14 +57,14 @@ export class ProductionUpdateComponent implements OnInit {
   update() {
     if (this.form.invalid) return;
     
-    this.productionService.update(this.getObjectFromForm(this.form.value))
+    this.productionService.update(this.getObject(this.form.value))
       .subscribe(
         data => {
           this.snackBar.open('Production updated with success!', 'Success');
           this.router.navigate(['/productions']);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
   }
@@ -72,14 +80,6 @@ export class ProductionUpdateComponent implements OnInit {
           this.snackBar.open(err.error.message, "Error");
         }
       );
-  }
-
-  getObjectFromForm(data: any): Production {
-    return new Production(
-      data.value,
-      this.production.fieldId,
-      this.production.id
-    );
   }
 
 }

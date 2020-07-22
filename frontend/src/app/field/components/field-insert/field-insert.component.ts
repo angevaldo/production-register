@@ -26,9 +26,24 @@ export class FieldInsertComponent implements OnInit {
     private sharedService: SharedService
   ) { }
 
-  ngOnInit(): void {
-    this.findAllFarms();
+  private populateSelecFields() {
+    this.farmService.findAll()
+      .subscribe(
+        data => { this.farms = data as Farm[]; },
+        err => { this.snackBar.open(err.error.message, 'Error'); }
+      );
+  }
 
+  private getObject(data: any): Field {
+    return new Field(
+      data.name,
+      data.area,
+      data.farmId,
+      null
+    );
+  }
+
+  ngOnInit(): void {
     this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
 
     this.form = this.fb.group({
@@ -36,46 +51,33 @@ export class FieldInsertComponent implements OnInit {
       area: ['', [Validators.required]],
       farmId: [this.farmCurrent.id, [Validators.required]]
     });
+    
+    this.populateSelecFields();
   }
 
-  changeFarmCurrent(farmId: string) {
+  onChangeFarmCurrent(farmId: string) {
     const farm: Farm = this.farms.find(s => s.id == farmId);
     this.farmCurrent.id = farm.id;
     this.farmCurrent.name = farm.name;
-    this.sharedService.nextFarm(this.farmCurrent);
-  }
 
-  findAllFarms() {
-    this.farmService.findAll()
-      .subscribe(
-        data => { this.farms = data as Farm[]; },
-        err => { this.snackBar.open(err.error.message, "Error"); }
-      );
+    this.sharedService.nextFarm(this.farmCurrent);
+
+    this.populateSelecFields();
   }
 
   insert() {
     if (this.form.invalid) return;
 
-    this.fieldService.insert(this.getObjectFromForm(this.form.value))
+    this.fieldService.insert(this.getObject(this.form.value))
       .subscribe(
         data => {
-          const msg: string = 'Field inserted with success!';
-          this.snackBar.open(msg, "Success");
+          this.snackBar.open('Field inserted with success!', 'Success');
           this.router.navigate(['/fields']);
         },
         err => {
-          this.snackBar.open(err.error.message, "Error");
+          this.snackBar.open(err.error.message, 'Error');
         }
       );
-  }
-
-  getObjectFromForm(data: any): Field {
-    return new Field(
-      data.name,
-      data.area,
-      data.farmId,
-      null
-    );
   }
 
 }
