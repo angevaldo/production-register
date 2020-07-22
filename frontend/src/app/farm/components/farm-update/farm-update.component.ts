@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Farm, FarmService, ProductionService } from '../../../shared';
+import { Farm, FarmService, ProductionService, SharedService } from '../../../shared';
 
 @Component({
   selector: 'app-farm-update',
@@ -21,7 +21,8 @@ export class FarmUpdateComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private farmService: FarmService,
-    private productionService: ProductionService
+    private productionService: ProductionService,
+    private sharedService: SharedService
   ) { }
 
   private getObject(data: any): Farm {
@@ -45,6 +46,7 @@ export class FarmUpdateComponent implements OnInit {
     this.farmService.findById(this.farmId)
       .subscribe(
         data => {
+          this.sharedService.nextFarm(new Farm(data.name, data.id));
           this.form.get('name').setValue(data.name);
         },
         err => {
@@ -56,9 +58,11 @@ export class FarmUpdateComponent implements OnInit {
   update() {
     if (this.form.invalid) return;
 
-    this.farmService.update(this.getObject(this.form.value))
+    let farm: Farm = this.getObject(this.form.value);
+    this.farmService.update(farm)
       .subscribe(
         data => {
+          this.sharedService.nextFarm(farm);
           this.snackBar.open('Farm updated with success!', 'Success');
           this.router.navigate(['/farms']);
         },

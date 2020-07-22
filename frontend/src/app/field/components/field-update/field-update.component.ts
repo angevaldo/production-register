@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Field, FieldService, Farm, ProductionService } from '../../../shared';
-import { SharedService } from '../../services';
+import { SharedService } from '../../../shared';
 
 @Component({
   selector: 'app-field-update',
@@ -64,9 +64,11 @@ export class FieldUpdateComponent implements OnInit {
   update() {
     if (this.form.invalid) return;
 
-    this.fieldService.update(this.getObject(this.form.value))
+    let field: Field = this.getObject(this.form.value);
+    this.fieldService.update(field)
       .subscribe(
         data => {
+          this.sharedService.nextField(field);
           this.snackBar.open('Field updated with success!', 'Success');
           this.router.navigate(['/fields']);
         },
@@ -80,6 +82,7 @@ export class FieldUpdateComponent implements OnInit {
     this.fieldService.deleteById(this.fieldId)
       .subscribe(
         data => {
+          this.sharedService.nextField(new Field('?', null, null));
           this.snackBar.open('Field deleted with success!', 'Success');
           this.router.navigate(['/fields']);
         },

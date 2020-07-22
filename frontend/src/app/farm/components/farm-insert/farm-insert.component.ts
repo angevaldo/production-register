@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { Farm, FarmService } from '../../../shared';
+import { Farm, FarmService, SharedService } from '../../../shared';
 
 @Component({
   selector: 'app-farm-insert',
@@ -18,8 +18,16 @@ export class FarmInsertComponent implements OnInit {
   	private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private router: Router,
-    private farmService: FarmService
+    private farmService: FarmService,
+    private sharedService: SharedService
   ) { }
+
+  private getObject(data: any): Farm {
+    return new Farm(
+      data.name,
+      null
+    );
+  }
 
   ngOnInit(): void {
   	this.form = this.fb.group({
@@ -30,24 +38,17 @@ export class FarmInsertComponent implements OnInit {
   insert() {
   	if (this.form.invalid) return;
 
-    this.farmService.insert(this.getObjectFromForm(this.form.value))
+    let farm: Farm = this.getObject(this.form.value);
+    this.farmService.insert(farm)
       .subscribe(
         data => {
-          const msg: string = 'Farm inserted with success!';
-          this.snackBar.open(msg, 'Success');
+          this.snackBar.open('Farm inserted with success!', 'Success');
           this.router.navigate(['/farms']);
         },
         err => {
           this.snackBar.open(err.error.message, 'Error');
         }
       );
-  }
-
-  getObjectFromForm(data: any): Farm {
-    return new Farm(
-      data.name,
-      null
-    );
   }
 
 }

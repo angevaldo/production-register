@@ -5,7 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
 import { FarmService, FieldService, Field, Farm } from '../../../shared';
-import { SharedService } from '../../services';
+import { SharedService } from '../../../shared';
 
 @Component({
   selector: 'app-field-list',
@@ -87,6 +87,7 @@ export class FieldListComponent implements OnInit {
     this.fieldService.deleteById(fieldId)
       .subscribe(
         data => {
+          this.sharedService.nextField(new Field('?', null, null));
           this.snackBar.open('Field deleted with success!', 'Success');
           this.populateTableData();
         },

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Production, ProductionService, Farm, FarmService, FieldService, Field } from '../../../shared';
-import { SharedService } from '../../services';
+import { SharedService } from '../../../shared';
 
 @Component({
   selector: 'app-production-insert',

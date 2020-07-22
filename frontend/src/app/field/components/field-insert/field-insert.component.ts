@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Field, FieldService, Farm, FarmService } from '../../../shared';
-import { SharedService } from '../../services';
+import { SharedService } from '../../../shared';
 
 @Component({
   selector: 'app-field-insert',
@@ -68,7 +68,8 @@ export class FieldInsertComponent implements OnInit {
   insert() {
     if (this.form.invalid) return;
 
-    this.fieldService.insert(this.getObject(this.form.value))
+    let field: Field = this.getObject(this.form.value);
+    this.fieldService.insert(field)
       .subscribe(
         data => {
           this.snackBar.open('Field inserted with success!', 'Success');

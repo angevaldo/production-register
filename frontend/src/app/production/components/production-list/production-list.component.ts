@@ -6,7 +6,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
 import { FarmService, ProductionService, Production, Farm, Field, FieldService } from '../../../shared';
-import { SharedService } from '../../services';
+import { SharedService } from '../../../shared';
 
 @Component({
   selector: 'app-production-list',

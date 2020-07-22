@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Farm } from 'src/app/shared';
-import { SharedService } from "../services";
+import { SharedService } from "../../shared";
 
 @Component({
     template: `
