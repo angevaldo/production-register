@@ -37,6 +37,7 @@ export class FieldUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.fieldId = this.route.snapshot.paramMap.get('fieldId');
     this.sharedService.sharedFarm.subscribe(farmCurrent => this.farmCurrent = farmCurrent);
 
     this.findById();
@@ -45,15 +46,16 @@ export class FieldUpdateComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       area: ['', [Validators.required]]
     });
+
   }
 
   findById() {
-    this.fieldService.findById(this.route.snapshot.paramMap.get('fieldId'))
+    this.fieldService.findById(this.fieldId)
       .subscribe(
         data => {
-          this.fieldId = data.id;
           this.form.get('name').setValue(data.name);
           this.form.get('area').setValue(data.area);
+          this.sharedService.nextField(this.getObject(this.form.value));
         },
         err => {
           this.snackBar.open(err.error.message, 'Error');
